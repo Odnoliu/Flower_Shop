@@ -1,0 +1,92 @@
+# -------------------------
+# OS
+# -------------------------
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# -------------------------
+# Node / React
+# -------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+.pnp.*
+# Environment files (may contain secrets)
+.env
+.env.local
+.env.*.local
+# Build / caches / artifacts
+/build
+/dist
+/public/build
+/.cache
+.cache/
+.next/
+out/
+coverage/
+# other tools
+*.tgz
+
+# -------------------------
+# PHP (plain PHP / Composer)
+# -------------------------
+/vendor/
+/composer.phar
+# If you use Composer's cache or vendor binaries
+/.composer/
+/vendor/bin/
+
+# Common runtime/temp/log directories
+/logs/
+/log/
+tmp/
+temp/
+cache/
+storage/
+uploads/
+sessions/
+
+# Database files
+*.sqlite
+*.sqlite3
+*.sql
+*.sql.gz
+
+# PHP tooling
+.phpunit.result.cache
+
+# -------------------------
+# IDEs / Editors
+# -------------------------
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.code-workspace
+
+# -------------------------
+# Certificates / Keys
+# -------------------------
+*.pem
+*.key
+*.crt
+
+# -------------------------
+# Misc
+# -------------------------
+*.log
+.DS_Store
+Thumbs.db
+yarn-error.log
+.env.backup
+.env.*.backup

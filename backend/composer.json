@@ -1,0 +1,17 @@
+{
+    "name": "asus/backend",
+    "autoload": {
+        "psr-4": {
+            "Asus\\Backend\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Odnoliu",
+            "email": "tbui4702@gmail.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.6"
+    }
+}
