@@ -5,30 +5,6 @@ This is a web application for a flower shop, built with:
 - **Frontend**: ReactJS with TailwindCSS for responsive UI.
 - **Database**: MySQL (managed via MySQL Workbench).
 
-## Project Structure
-flower-shop/
-├── backend/                # PHP backend (API)
-│   ├── src/               # Source code
-│   │   ├── Config/        # Database and config files
-│   │   ├── Controllers/   # API logic
-│   │   ├── Models/        # Database interactions
-│   │   ├── Services/      # Business logic
-│   │   ├── Helpers/       # Utility functions
-│   │   └── Routes/        # API routing
-│   ├── public/            # Public assets (if needed)
-│   ├── logs/              # Log files
-│   ├── tests/             # Unit tests
-│   ├── .env               # Environment variables (not committed)
-│   ├── composer.json      # PHP dependencies
-│   └── index.php          # API entry point
-├── frontend/               # ReactJS + TailwindCSS
-│   ├── src/               # React components, pages, styles
-│   ├── public/            # Static files
-│   ├── package.json       # Node.js dependencies
-│   └── tailwind.config.js # TailwindCSS config
-├── .gitignore             # Git ignore file
-└── README.md              # This file
-
 ## Prerequisites
 - **PHP**: >= 7.4 (with `openssl` extension enabled)
 - **Composer**: For PHP dependencies
@@ -45,26 +21,27 @@ flower-shop/
    cd backend
 2. Install PHP dependencies:
     ```bash
-composer install
+    composer install
 3. Copy .env.example to .env and configure:
     ```bash
-cp .env.example .env
+    cp .env.example .env
 
-Update .env with your MySQL credentials:
-DB_HOST=localhost
-DB_NAME=flower_shop
-DB_USER=your_user
-DB_PASS=your_password
-APP_SECRET=your_secret_key
+4. Update .env with your MySQL credentials:
+    ```bash
+    DB_HOST=localhost
+    DB_NAME=flower_shop
+    DB_USER=your_user
+    DB_PASS=your_password
+    APP_SECRET=your_secret_key
 
-4. Import database schema:
+5. Import database schema:
 Use MySQL Workbench to import database/flower_shop.sql (create this file for your schema).
 
-5. Start server
+6. Start server
     ```bash
     php -S localhost:8000
 
-6. Test API
+7. Test API:
 User Postman or Curl 
 
 ### Frontend Setup
