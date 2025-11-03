@@ -1,9 +1,20 @@
 <?php
+
 require_once __DIR__ . '/vendor/autoload.php';
 
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *'); // Cho phép frontend React gọi API (CORS)
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
-use App\Routes;
 
-Routes\registerRoutes();
+require_once __DIR__ . '/src/routes/Router.php';
+require_once __DIR__ . '/src/routes/CityRoutes.php';
+
+use App\Routes\Router;
+
+$router = new Router();
+
+$method = $_SERVER['REQUEST_METHOD'];
+$uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$uri    = rtrim($uri, '/');
+
+$router->dispatch($method, $uri);
