@@ -2,7 +2,7 @@
     "name": "asus/backend",
     "autoload": {
         "psr-4": {
-            "Asus\\Backend\\": "src/"
+            "App\\": "src/"
         }
     },
     "authors": [
