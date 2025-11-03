@@ -20,6 +20,12 @@ class Router {
             return;
         }
 
+        if (preg_match('#^/authorization(/.*)?$#', $requestPath)) {
+            $authorizationRoutes = new AuthorizationRoutes();
+            $authorizationRoutes->handle($requestMethod, $requestPath);
+            return;
+        }
+
         // 2. Sau này thêm route khác ở đây...
         // Ví dụ: ProductRoutes, UserRoutes,...
 
