@@ -18,20 +18,20 @@ class CityRoutes {
             if ($method == 'GET') {
                 $this->controller->index();
             } elseif ($method == 'POST') {
-                $this->controller->city_create();
+                $this->controller->createCity();
             }
         }
 
-        // /cities/123
+        // /city/123
         if (preg_match('#^/city/(\d+)$#', $path, $matches)) {
             $id = (int)$matches[1];
 
             if ($method == 'GET') {
-                $this->controller->city_readById($id);
+                $this->controller->readCityById($id);
             } elseif ($method == 'PUT') {
-                $this->controller->city_update($id);
+                $this->controller->updateCity($id);
             } elseif ($method == 'DELETE') {
-                $this->controller->city_delete($id);
+                $this->controller->deleteCity($id);
             }
         }
 
