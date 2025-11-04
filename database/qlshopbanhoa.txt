@@ -1,0 +1,227 @@
+CREATE DATABASE IF NOT EXISTS flower_shop;
+ALTER DATABASE flower_shop 
+CHARACTER SET utf8mb4 
+COLLATE utf8mb4_unicode_ci;
+
+use flower_shop;
+
+drop table if exists cart;
+drop table if exists authorized;
+drop table if exists authorization;
+drop table if exists account;
+drop table if exists order_detail;
+drop table if exists orders;
+drop table if exists status;
+drop table if exists price;
+drop table if exists image;
+drop table if exists product;
+drop table if exists type;
+drop table if exists address;
+drop table if exists user;
+drop table if exists ward;
+drop table if exists city;
+
+create table city (
+	CITY_Id int auto_increment primary key,
+    CITY_Name varchar(255) not null unique
+)ENGINE=InnoDB;
+
+insert into city(CITY_Name) values
+("Cần Thơ"),
+("An Giang"),
+("Cà Mau"),
+("Đồng Tháp"),
+("Vĩnh Long");
+
+create table ward (
+    WARD_Id int auto_increment primary key,
+    WARD_Name varchar(255) not null unique,
+    CITY_Id int not null,
+    foreign key (CITY_Id) references city(CITY_Id) on delete cascade on update cascade
+)ENGINE=InnoDB;
+
+insert into ward (WARD_Name, CITY_Id) values
+("Ninh Kiều", 1),
+("Cái Khế", 1),
+("Tân An", 1),
+("An Phú", 2),
+("Vĩnh Hậu", 2),
+("Nhơn Hội", 2),
+("Tân Thuận", 3),
+("Tân Tiến", 3),
+("Tạ An Khương", 3),
+("Tân Hồng", 4),
+("Tân Thành", 4),
+("Tân Hộ Cơ", 4),
+("Long Hồ", 5),
+("Trà Ôn", 5),
+("Bình Tân", 5);
+
+create table user (
+    USER_Phone varchar(10) primary key,
+    USER_Email varchar(50) not null unique,
+    USER_Name varchar(100) not null,
+    USER_Gender int not null
+)ENGINE=InnoDB;
+
+insert into user (USER_Phone, USER_Email, USER_Name, USER_Gender) values
+('0911123123', 'vana@gmailcom', 'Nguyễn Văn A', 0),
+('0922232323', 'tranb@gmailcom', 'Trần Thị B', 1),
+('0933343434', 'hoangc@gmailcom', 'Võ Hoàng C', 0),
+('0944454545', 'lecd@gmailcom', 'Lê Cẩm D', 1);
+
+create table address (
+    ADDRESS_Id int auto_increment primary key,
+    ADDRESS_Address varchar(255) not null,
+    ADDRESS_Description varchar(255) not null,
+    USER_Phone varchar(10) not null,
+    WARD_Id int not null,
+    foreign key (USER_Phone) references user(USER_Phone) on delete cascade on update cascade,
+    foreign key (WARD_Id) references ward(WARD_Id) on delete cascade on update cascade
+)ENGINE=InnoDB;
+
+insert into address (ADDRESS_Address, ADDRESS_Description, USER_Phone, WARD_Id) values
+('123 Lê Lợi', 'Nhà riêng', '0911123123', 1),
+('456 Trần Hưng Đạo', 'Cơ quan', '0922232323', 4),
+('789 Nguyễn Huệ', 'Nhà riêng', '0933343434', 10),
+('1011 Phan Đình Phùng', 'Cơ quan', '0944454545', 13);
+
+create table type (
+    TYPE_Id int auto_increment primary key,
+    TYPE_Name varchar(100) not null unique
+)ENGINE=InnoDB;
+
+insert into type (TYPE_Name) values
+('Hoa tươi'),
+('Hoa giả'),
+('Hoa giấy'),
+('Hoa sáp');
+
+create table product (
+    PRODUCT_Id int auto_increment primary key,
+    PRODUCT_Name varchar(255) not null,
+    PRODUCT_Avartar blob default null,
+    TYPE_Id int not null,
+    foreign key (TYPE_Id) references type(TYPE_Id) on delete cascade on update cascade
+)ENGINE=InnoDB;
+
+insert into product (PRODUCT_Name, TYPE_Id) values
+('Hoa hồng đỏ', 1),
+('Hoa lan trắng', 1),
+('Hoa cẩm tú cầu', 2),
+('Hoa hướng dương', 3);
+
+create table image (
+    IMAGE_Id int auto_increment primary key,
+    IMAGE_Image blob not null,
+    PRODUCT_Id int not null,
+    foreign key (PRODUCT_Id) references product(PRODUCT_Id) on delete cascade on update cascade
+)ENGINE=InnoDB;
+
+create table price (
+    PRICE_EffectiveDate date,
+    PRICE_UpdatedDate date not null,
+    PRICE_Price decimal(15,2) not null,
+    PRODUCT_Id int not null,
+    primary key (PRICE_EffectiveDate, PRODUCT_Id),
+    foreign key (PRODUCT_Id) references product(PRODUCT_Id) on delete cascade on update cascade
+)ENGINE=InnoDB;
+
+insert into price (PRICE_EffectiveDate, PRICE_UpdatedDate, PRICE_Price, PRODUCT_Id) values
+('2025-01-01', '2025-01-01', 50000.00, 1),
+('2025-02-01', '2025-02-01', 55000.00, 1),
+('2025-01-15', '2025-01-15', 60000.00, 2),
+('2025-03-01', '2025-03-01', 65000.00, 2),
+('2025-01-10', '2025-01-10', 40000.00, 3),
+('2025-02-20', '2025-02-20', 45000.00, 3),
+('2025-01-05', '2025-01-05', 30000.00, 4),
+('2025-03-15', '2025-03-15', 35000.00, 4);
+
+create table status (
+    STATUS_Id int auto_increment primary key,
+    STATUS_Name varchar(100) not null unique
+)ENGINE=InnoDB;
+
+insert into status (STATUS_Name) values
+('Đang xử lý'),
+('Đang giao hàng'),
+('Đã giao hàng'),
+('Đã hủy');
+
+create table orders (
+    ORDER_Id int auto_increment primary key,
+    ORDER_CreatedDate date not null,
+    ORDER_Total decimal(15,2) not null,
+    STATUS_Id int not null,
+    USER_Phone varchar(10) not null,
+    foreign key (STATUS_Id) references status(STATUS_Id) on delete cascade on update cascade,
+    foreign key (USER_Phone) references user(USER_Phone) on delete cascade on update cascade
+)ENGINE=InnoDB;
+
+insert into orders (ORDER_CreatedDate, ORDER_Total, STATUS_Id, USER_Phone) values
+('2025-10-01', 120000.00, 1, '0911123123'),
+('2025-10-02', 90000.00, 2, '0922232323'),
+('2025-10-03', 35000.00, 3, '0933343434'),
+('2025-10-04', 35000.00, 4, '0944454545');
+
+create table order_detail (
+    ORDER_Id int not null,
+    PRODUCT_Id int not null,
+    ORDERDETAIL_Quantity int not null,
+    primary key (ORDER_Id, PRODUCT_Id),
+    foreign key (ORDER_Id) references orders(ORDER_Id) on delete cascade on update cascade,
+    foreign key (PRODUCT_Id) references product(PRODUCT_Id) on delete cascade on update cascade
+)ENGINE=InnoDB;
+
+insert into order_detail (ORDER_Id, PRODUCT_Id, ORDERDETAIL_Quantity) values
+(1, 1, 1),
+(1, 2, 1),
+(2, 3, 2),
+(3, 4, 1),
+(4, 4, 1);
+
+create table account (
+    ACCOUNT_Id int auto_increment primary key,
+    ACCOUNT_Password varchar(255) not null,
+    USER_Phone varchar(10) not null,
+    foreign key (USER_Phone) references user(USER_Phone) on delete cascade on update cascade
+)ENGINE=InnoDB;
+
+insert into account (ACCOUNT_Password, USER_Phone) values
+('test123', '0911123123'),
+('test123', '0922232323'),
+('test123', '0933343434'),
+('test123', '0944454545');
+
+create table authorization (
+    AUTHORIZATION_Id int auto_increment primary key,
+    AUTHORIZATION_Name varchar(100) not null unique
+)ENGINE=InnoDB;
+
+insert into authorization (AUTHORIZATION_Name) values
+('Admin'),
+('Shop Owner'),
+('Employee'),
+('Customer');
+
+create table authorized (
+    ACCOUNT_Id int not null,
+    AUTHORIZATION_Id int not null,
+    primary key (ACCOUNT_Id, AUTHORIZATION_Id),
+    foreign key (ACCOUNT_Id) references account(ACCOUNT_Id) on delete cascade on update cascade,
+    foreign key (AUTHORIZATION_Id) references authorization(AUTHORIZATION_Id) on delete cascade on update cascade
+)ENGINE=InnoDB;
+
+insert into authorized (ACCOUNT_Id, AUTHORIZATION_Id) values
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4);
+
+create table cart (
+    USER_Phone varchar(10) not null,
+    PRODUCT_Id int not null,
+    CART_Quantity int not null,
+    foreign key (USER_Phone) references user(USER_Phone) on delete cascade on update cascade,
+    foreign key (PRODUCT_Id) references product(PRODUCT_Id) on delete cascade on update cascade
+)ENGINE=InnoDB;

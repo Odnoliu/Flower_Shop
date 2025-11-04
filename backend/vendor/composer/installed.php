@@ -1,9 +1,15 @@
 <?php return array(
     'root' => array(
         'name' => 'asus/backend',
+<<<<<<< HEAD
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
         'reference' => 'e40c40af3b92d7a0b6805451035265db47003677',
+=======
+        'pretty_version' => 'dev-develop',
+        'version' => 'dev-develop',
+        'reference' => '4d657a374a656c8fe15795586d031b079b1b6b9a',
+>>>>>>> e52e9bcc0c76437f486926df1fe3566c270c5a43
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +17,15 @@
     ),
     'versions' => array(
         'asus/backend' => array(
+<<<<<<< HEAD
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
             'reference' => 'e40c40af3b92d7a0b6805451035265db47003677',
+=======
+            'pretty_version' => 'dev-develop',
+            'version' => 'dev-develop',
+            'reference' => '4d657a374a656c8fe15795586d031b079b1b6b9a',
+>>>>>>> e52e9bcc0c76437f486926df1fe3566c270c5a43
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
