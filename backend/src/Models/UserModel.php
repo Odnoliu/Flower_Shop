@@ -21,7 +21,7 @@ class UserModel{
         $stmt->bindParam(':name', $name, \PDO::PARAM_STR);
         $stmt->bindParam(':gender', $gender, \PDO::PARAM_STR);
         $stmt->execute();
-        return $this->pdo->lastInsertId();
+        return $phone;
     }
 
     public function readAll(){

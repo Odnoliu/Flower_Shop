@@ -31,7 +31,7 @@ class CityModel {
     }
 
 
-    public function update($id, $name) {
+    public function update($id, $name) { // $name is data['CITY_Name'] in the controller file
         $stmt = $this->pdo->prepare("UPDATE City SET CITY_Name = :name WHERE CITY_Id = :id");
         $stmt->bindParam(':name', $name, \PDO::PARAM_STR);
         $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
