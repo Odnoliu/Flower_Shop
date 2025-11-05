@@ -34,7 +34,7 @@ class UserModel{
     }
     // Use this for search function
     public function readByInfo($keyword){
-        $search = "%{keyword}%";
+        $search = "%{$keyword}%";
         $stmt = $this->pdo->prepare("
             SELECT * 
             FROM user
@@ -43,7 +43,7 @@ class UserModel{
                 OR USER_Name LIKE :keyword
             ORDER BY USER_Name ASC
         ");
-        $stmt->bindParam(':keyword', $search, \PDO::PARAM_STR);
+        $stmt->bindParam(':keyword', $search, PDO::PARAM_STR);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }

@@ -26,6 +26,11 @@ class Router {
             return;
         }
 
+        if(preg_match('#^/user(/.*)?$#', $requestPath)){
+            $userRoutes = new UserRoutes();
+            $userRoutes->handle($requestMethod, $requestPath);
+            return;
+        }
         // 2. Sau này thêm route khác ở đây...
         // Ví dụ: ProductRoutes, UserRoutes,...
 

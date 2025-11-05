@@ -7,6 +7,10 @@ use App\Controllers\UserController;
 class UserRoutes{
     private $controller;
 
+    public function __construct(){
+        $this->controller = new UserController();
+    }
+
     public function handle($method, $path){
         if($path == '/user'){
             if($method == 'GET'){
@@ -20,7 +24,7 @@ class UserRoutes{
             $keyword = $matches[1];
 
             if($method == 'GET'){
-                $this->controller->readByInfo($keyword);
+                $this->controller->readUserByInfo($keyword);
                 return;
             }
             // the keyword can be phone, email or name, but UPDATE/DELETE must use a valid phone number
