@@ -41,6 +41,17 @@ class WardModel{
         ];
     }
 
+    public function readbyId($id){
+        $stmt = $this->pdo->prepare("
+            SELECT *
+            FROM ward
+            WHERE WARD_Id = :id
+        ");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function update($id, $name){
         $stmt = $this->pdo->prepare("
             UPDATE ward 
@@ -61,5 +72,4 @@ class WardModel{
         return $stmt->execute();
     }
 }
-
 ?>
