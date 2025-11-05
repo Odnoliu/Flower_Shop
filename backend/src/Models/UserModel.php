@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-
+use PDO;
 use App\Config\Database;
 
 class UserModel{
@@ -21,16 +21,28 @@ class UserModel{
         $stmt->bindParam(':name', $name, \PDO::PARAM_STR);
         $stmt->bindParam(':gender', $gender, \PDO::PARAM_STR);
         $stmt->execute();
-        return $phone;
+        return;
     }
 
     public function readAll(){
+        $countStmt = $this->pdo->prepare("
+            SELECT COUNT(*) 
+            FROM user
+        ");
+        $countStmt->execute();
+        $total = (int)$countStmt->fetchColumn();
+        
         $stmt = $this->pdo->prepare("
             SELECT * 
             FROM user
+            ORDER BY USER_Name ASC
         ");
         $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return [
+            'total' => $total,
+            'users' => $users
+        ];
     }
     // Use this for search function
     public function readByInfo($keyword){
@@ -43,7 +55,7 @@ class UserModel{
                 OR USER_Name LIKE :keyword
             ORDER BY USER_Name ASC
         ");
-        $stmt->bindParam(':keyword', $search, PDO::PARAM_STR);
+        $stmt->bindParam(':keyword', $search, \PDO::PARAM_STR);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -51,11 +63,11 @@ class UserModel{
     public function update($phone, $email, $name, $gender){
         $stmt = $this->pdo->prepare("
             UPDATE user
-            SET USER_Email = :email, USER_Name = :name, USER_Gender = :gender 
+            SET USER_Name = :name, USER_Email = :email, USER_Gender = :gender 
             WHERE USER_Phone = :phone
         ");
-        $stmt->bindParam(':email', $email, \PDO::PARAM_STR);
         $stmt->bindParam(':name', $name, \PDO::PARAM_STR);
+        $stmt->bindParam(':email', $email, \PDO::PARAM_STR);
         $stmt->bindParam(':gender', $gender, \PDO::PARAM_STR);
         $stmt->bindParam(':phone', $phone, \PDO::PARAM_STR);
         return $stmt->execute();

@@ -31,7 +31,7 @@ class UserRoutes{
             // if the keyword is a name (example: Nguyen Van A), we cannot allow the function to UPDATE OR DELETE
             // the check below make sure the caller use the correct method, 
             // we assume if the caller wants to update or delete something, its keyword has to be a phone number and not a name
-            if($method == 'PUT' && $method == 'DELETE'){
+            if($method == 'PUT' || $method == 'DELETE'){
                 if (!preg_match('/^\d{10}$/', $keyword)) {
                     return;
                 }   

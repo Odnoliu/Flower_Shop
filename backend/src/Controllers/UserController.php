@@ -34,11 +34,17 @@ class UserController {
             && isset($data['USER_Gender']) 
             && !empty($data['USER_Gender'])            
         ){
-            $id = $this->model->create($data['USER_Phone'], 
+            $this->model->create($data['USER_Phone'], 
                                         $data['USER_Email'], 
                                         $data['USER_Name'], 
                                         $data['USER_Gender']);
-            $this->jsonResponse(['success' => true, 'id' => $id], 201);    
+            $this->jsonResponse([
+                'success' => true, 
+                'USER_Phone' => $data['USER_Phone'],
+                'USER_Email' => $data['USER_Email'],
+                'USER_Name' => $data['USER_Name'],
+                'USER_Gender' => $data['USER_Gender']
+            ], 201);    
         }else $this->jsonResponse(['error' => 'Invalid data'], 400);
     }
 
@@ -51,9 +57,7 @@ class UserController {
 
     public function updateUser($phone){
         $data = json_decode(file_get_contents('php://input'), true);
-        if(isset($data['USER_Phone']) 
-            && !empty($data['USER_Phone'])
-            && isset($data['USER_Email']) 
+        if(isset($data['USER_Email']) 
             && !empty($data['USER_Email'])
             && isset($data['USER_Name']) 
             && !empty($data['USER_Name'])
