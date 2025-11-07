@@ -32,11 +32,11 @@ class Router {
             return;
         }
 
-        // if (preg_match('#^/users/email/.+$#', $requestPath)) {
-        //     $userRoutes = new UserRoutes();
-        //     $userRoutes->handle($requestMethod, $requestPath);
-        //     return;
-        // }
+        if (preg_match('#^/users/email/.+$#', $requestPath)) {
+            $userRoutes = new UserRoutes();
+            $userRoutes->handle($requestMethod, $requestPath);
+            return;
+        }
 
         if(preg_match('#^/ward(/.*)?$#', $requestPath)){
             $wardRoutes = new WardRoutes();
