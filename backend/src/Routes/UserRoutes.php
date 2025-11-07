@@ -44,7 +44,7 @@ class UserRoutes{
         }
         elseif(preg_match('#^/users/email/([^/]+)$#', $path, $matches)) {
             $email = urldecode($matches[1]);
-            if ($method === 'GET') {
+            if ($method == 'GET') {
                 $this->controller->readUserByInfo($email);
             }
         }
@@ -53,7 +53,6 @@ class UserRoutes{
         echo json_encode([
             'error' => 'Route not found'
         ]);
-
         exit;
     }
 }
