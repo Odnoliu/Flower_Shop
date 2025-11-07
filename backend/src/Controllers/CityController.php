@@ -16,7 +16,7 @@ class CityController {
         $this->jsonResponse($cities);
     }
     
-    public function city_create(){
+    public function createCity(){
         $data = json_decode(file_get_contents('php://input'), true);
         if (isset($data['CITY_Name']) && !empty($data['CITY_Name'])) {
             $id = $this->model->create($data['CITY_Name']);
@@ -26,7 +26,7 @@ class CityController {
         }
     }
 
-    public function city_readById($id) {
+    public function readCityById($id) {
         $city = $this->model->readById($id);
         if ($city) {
             $this->jsonResponse($city);
@@ -35,7 +35,7 @@ class CityController {
         }
     }
 
-    public function city_update($id) {
+    public function updateCity($id) {
         $data = json_decode(file_get_contents('php://input'), true);
         if (isset($data['CITY_Name']) && !empty($data['CITY_Name'])) {
             $success = $this->model->update($id, $data['CITY_Name']);
@@ -49,7 +49,7 @@ class CityController {
         }
     }
 
-    public function city_delete($id) {
+    public function deleteCity($id) {
         $success = $this->model->delete($id);
         if ($success) {
             $this->jsonResponse(['success' => true]);

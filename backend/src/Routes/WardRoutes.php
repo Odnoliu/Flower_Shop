@@ -1,37 +1,36 @@
 <?php
-// src/routes/city.php
 
 namespace App\Routes;
 
-use App\Controllers\CityController;
+use App\Controllers\WardController;
 
-class CityRoutes {
+class WardRoutes{
     private $controller;
 
-    public function __construct() {
-        $this->controller = new CityController();
+    public function __construct(){
+        $this->controller = new WardController();
     }
 
     public function handle($method, $path) {
     
-        if ($path == '/city') {
+        if ($path == '/ward') {
             if ($method == 'GET') {
                 $this->controller->index();
             } elseif ($method == 'POST') {
-                $this->controller->createCity();
+                $this->controller->createWard();
             }
         }
 
-        // /city/123
-        if (preg_match('#^/city/(\d+)$#', $path, $matches)) {
+        // /ward/123
+        if (preg_match('#^/ward/(\d+)$#', $path, $matches)) {
             $id = (int)$matches[1];
 
             if ($method == 'GET') {
-                $this->controller->readCityById($id);
+                $this->controller->readWardById($id);
             } elseif ($method == 'PUT') {
-                $this->controller->updateCity($id);
+                $this->controller->updateWard($id);
             } elseif ($method == 'DELETE') {
-                $this->controller->deleteCity($id);
+                $this->controller->deleteWard($id);
             }
         }
 
@@ -40,3 +39,5 @@ class CityRoutes {
         exit;
     }
 }
+?>
+
