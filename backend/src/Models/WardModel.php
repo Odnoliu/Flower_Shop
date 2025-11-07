@@ -11,13 +11,13 @@ class WardModel{
         $this->pdo = Database::getInstance();
     }
 
-    public function create($id, $name){
+    public function create($name, $id){
         $stmt = $this->pdo->prepare("
-            INSERT INTO ward (WARD_Id, WARD_Name)
-            VALUES (:id, :name)
+            INSERT INTO ward (WARD_Name, CITY_Id)
+            VALUES (:name, :id)
         ");
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+        $stmt->bindParam(':id', $id, PDO::PARAM_STR);
         return $stmt->execute();
     }
 
@@ -41,7 +41,7 @@ class WardModel{
         ];
     }
 
-    public function readbyId($id){
+    public function readById($id){
         $stmt = $this->pdo->prepare("
             SELECT *
             FROM ward

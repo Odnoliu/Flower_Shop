@@ -20,8 +20,8 @@ class UserRoutes{
             }
         }
 
-        if(preg_match('#^/user/(\d+)$#', $path, $matches)){
-            $keyword = $matches[1];
+        if(preg_match('#^/user/(.+)$#', $path, $matches)){
+            $keyword = urldecode($matches[1]);
 
             if($method == 'GET'){
                 $this->controller->readUserByInfo($keyword);

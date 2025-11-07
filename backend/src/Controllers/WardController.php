@@ -24,22 +24,21 @@ class WardController{
 
     public function createWard(){
         $data = json_decode(file_get_contents('php://input'),true);
-        if(isset($data['WARD_Id']) && !empty($data['WARD_Id'])
-            && isset($data['WARD_Name']) && !empty($data['WARD_Name'])
+        if(isset($data['WARD_Name']) && !empty($data['WARD_Name'])
+        && isset($data['CITY_Id']) && !empty($data['CITY_Id'])
         ){
-            $this->model->create($data['WARD_Id'], $data['WARD_Name']);
+            $this->model->create($data['WARD_Name'], $data['CITY_Id']);
             $this->jsonResponse([
                 'success' => 'true',
-                'WARD_Id' => $data['WARD_Id'],
                 'WARD_Name' => $data['WARD_Name']
             ], 201);
-        }else $this->model->jsonResponse(['error' => 'Invalid date'], 400);
+        }else $this->jsonResponse(['error' => 'Invalid data'], 400);
     }
 
     public function readWardById($id){
-        $ward = $this->model->readbyId($id);
+        $ward = $this->model->readById($id);
         if($ward){
-            $this->model->jsonResponse($ward);
+            $this->jsonResponse($ward);
         }else $this->jsonResponse(['error' => 'Ward not found'], 404);
     }
 
@@ -48,7 +47,7 @@ class WardController{
         if(isset($data['WARD_Name']) && !empty($data['WARD_Name'])){
             $success = $this->model->update($id, $data['WARD_Name']);
             if($success){
-                $this->model->jsonResponse(['success' => true]);
+                $this->jsonResponse(['success' => true]);
             }else $this->jsonResponse(['error' => 'Update failed'], 500);
         }else $this->jsonResponse(['error' => 'Invalid data'], 400);
     }

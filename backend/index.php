@@ -7,7 +7,6 @@ $dotenv->load();
 
 
 require_once __DIR__ . '/src/routes/Router.php';
-require_once __DIR__ . '/src/routes/CityRoutes.php';
 
 use App\Routes\Router;
 
@@ -18,3 +17,5 @@ $uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri    = rtrim($uri, '/');
 
 $router->dispatch($method, $uri);
+
+?>
