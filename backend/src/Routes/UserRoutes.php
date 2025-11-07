@@ -42,12 +42,12 @@ class UserRoutes{
                 }
             }
         }
-        // elseif(preg_match('#^/users/email/([^/]+)$#', $path, $matches)) {
-        //     $email = urldecode($matches[1]);
-        //     if ($method === 'GET') {
-        //         $this->controller->readUserByInfo($email);
-        //     }
-        // }
+        elseif(preg_match('#^/users/email/([^/]+)$#', $path, $matches)) {
+            $email = urldecode($matches[1]);
+            if ($method === 'GET') {
+                $this->controller->readUserByInfo($email);
+            }
+        }
 
         http_response_code(404);
         echo json_encode([
