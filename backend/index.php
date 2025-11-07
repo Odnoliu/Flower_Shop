@@ -7,6 +7,11 @@ $dotenv->load();
 
 
 require_once __DIR__ . '/src/routes/Router.php';
+require_once __DIR__ . '/src/routes/CityRoutes.php';
+require_once __DIR__ . '/src/routes/WardRoutes.php';
+
+// require_once __DIR__ . '/src/routes/UserRoutes.php';
+
 
 use App\Routes\Router;
 

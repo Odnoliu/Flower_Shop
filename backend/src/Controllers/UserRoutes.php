@@ -20,17 +20,14 @@ class UserRoutes{
             }
         }
 
-        if(preg_match('#^/user/(.+)$#', $path, $matches)){
-            $keyword = urldecode($matches[1]);
+        if(preg_match('#^/user/(\d+)$#', $path, $matches)){
+            $keyword = $matches[1];
 
             if($method == 'GET'){
                 $this->controller->readUserByInfo($keyword);
                 return;
             }
-            // the keyword can be phone, email or name, but UPDATE/DELETE must use a valid phone number
-            // if the keyword is a name (example: Nguyen Van A), we cannot allow the function to UPDATE OR DELETE
-            // the check below make sure the caller use the correct method, 
-            // we assume if the caller wants to update or delete something, its keyword has to be a phone number and not a name
+
             if($method == 'PUT' || $method == 'DELETE'){
                 if (!preg_match('/^\d{10}$/', $keyword)) {
                     return;
@@ -45,6 +42,12 @@ class UserRoutes{
                 }
             }
         }
+        // elseif(preg_match('#^/users/email/([^/]+)$#', $path, $matches)) {
+        //     $email = urldecode($matches[1]);
+        //     if ($method === 'GET') {
+        //         $this->controller->readUserByInfo($email);
+        //     }
+        // }
 
         http_response_code(404);
         echo json_encode([

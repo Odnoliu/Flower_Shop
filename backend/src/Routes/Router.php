@@ -32,11 +32,19 @@ class Router {
             return;
         }
 
+        // if (preg_match('#^/users/email/.+$#', $requestPath)) {
+        //     $userRoutes = new UserRoutes();
+        //     $userRoutes->handle($requestMethod, $requestPath);
+        //     return;
+        // }
+
         if(preg_match('#^/ward(/.*)?$#', $requestPath)){
             $wardRoutes = new WardRoutes();
             $wardRoutes->handle($requestMethod, $requestPath);
             return;
         }
+
+
         // 2. Sau này thêm route khác ở đây...
         // Ví dụ: ProductRoutes, UserRoutes,...
 
