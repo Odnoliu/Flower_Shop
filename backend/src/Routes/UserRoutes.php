@@ -4,56 +4,58 @@ namespace App\Routes;
 
 use App\Controllers\UserController;
 
-class UserRoutes{
+class UserRoutes
+{
     private $controller;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->controller = new UserController();
     }
 
-    public function handle($method, $path){
-        if($path == '/user'){
-            if($method == 'GET'){
+    public function handle($method, $path)
+    {
+        if ($path == '/user') {
+            if ($method == 'GET') {
                 $this->controller->index();
-            }elseif ($method == 'POST'){
+                return;
+            }
+            if ($method == 'POST') {
                 $this->controller->createUser();
+                return;
             }
         }
 
-        if(preg_match('#^/user/(\d+)$#', $path, $matches)){
-            $keyword = $matches[1];
+        if (preg_match('#^/user/(.+)$#', $path, $matches)) {
+            $keyword = urldecode($matches[1]);
 
-            if($method == 'GET'){
+            if ($method == 'GET') {
                 $this->controller->readUserByInfo($keyword);
                 return;
             }
 
-            if($method == 'PUT' || $method == 'DELETE'){
-                if (!preg_match('/^\d{10}$/', $keyword)) {
+            if ($method == 'PUT' || $method == 'DELETE') {
+                if (!preg_match('/^\d{10}$/', $keyword)) { // a phone number has 10 digits, this IF checks that condition
+                    $this->notFound();
                     return;
-                }   
-                // at this point, $keyword is confirmed to be a valid phone number format
-                // Rename variable for clarity since it will be used as the primary key           
+                }
                 $phone = $keyword;
                 if ($method == 'PUT') {
                     $this->controller->updateUser($phone);
-                } elseif ($method == 'DELETE') {
+                } else {
                     $this->controller->deleteUser($phone);
                 }
+                return;
             }
         }
-        elseif(preg_match('#^/users/email/([^/]+)$#', $path, $matches)) {
-            $email = urldecode($matches[1]);
-            if ($method == 'GET') {
-                $this->controller->readUserByInfo($email);
-            }
-        }
+        $this->notFound();
+    }
 
+    private function notFound()
+    {
         http_response_code(404);
-        echo json_encode([
-            'error' => 'Route not found'
-        ]);
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'Route not found']);
         exit;
     }
 }
-?>

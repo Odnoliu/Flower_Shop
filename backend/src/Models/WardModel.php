@@ -68,7 +68,7 @@ class WardModel{
             DELETE FROM ward
             WHERE WARD_Id = :id
         ");
-        $stmt->bindParam(':id', id, PDO::PARAM_INT);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
 }

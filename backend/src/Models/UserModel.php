@@ -78,7 +78,7 @@ class UserModel{
             DELETE FROM user
             WHERE USER_Phone = :phone
         ");
-        $stmt->bindParam('phone', $phone, \PDO::PARAM_INT);
+        $stmt->bindParam(':phone', $phone, \PDO::PARAM_INT);
         return $stmt->execute();
     }
 }
