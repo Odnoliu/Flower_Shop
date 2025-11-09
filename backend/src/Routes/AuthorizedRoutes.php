@@ -1,37 +1,37 @@
 <?php
-// src/routes/authorization.php
+// src/routes/authorized.php
 
 namespace App\Routes;
 
-use App\Controllers\AuthorizationController;
+use App\Controllers\AuthorizedController;
 
-class AuthorizationRoutes {
+class AuthorizedRoutes {
     private $controller;
 
     public function __construct() {
-        $this->controller = new AuthorizationController();
+        $this->controller = new AuthorizedController();
     }
 
     public function handle($method, $path) {
     
-        if ($path == '/authorization') {
+        if ($path == '/authorized') {
             if ($method == 'GET') {
                 $this->controller->index();
             } elseif ($method == 'POST') {
-                $this->controller->createAuthorization();
+                $this->controller->createAuthorized();
             }
         }
 
         // /cities/123
-        if (preg_match('#^/authorization/(\d+)$#', $path, $matches)) {
+        if (preg_match('#^/authorized/(\d+)$#', $path, $matches)) {
             $id = (int)$matches[1];
 
             if ($method == 'GET') {
-                $this->controller->readAuthorizationById($id);
+                $this->controller->readAuthorizedByAccountId($id);
             } elseif ($method == 'PUT') {
-                $this->controller->updateAuthorization($id);
+                $this->controller->updateAuthorized($id);
             } elseif ($method == 'DELETE') {
-                $this->controller->deleteAuthorization($id);
+                $this->controller->deleteAuthorized($id);
             }
         }
 

@@ -44,6 +44,18 @@ class Router {
             return;
         }
 
+        if (preg_match('#^/authorized(/.*)?$#', $requestPath)) {
+            $authorizedRoutes = new AuthorizedRoutes();
+            $authorizedRoutes->handle($requestMethod, $requestPath);
+            return;
+        }
+
+        if (preg_match('#^/account(/.*)?$#', $requestPath)) {
+            $accountRoutes = new AccountRoutes();
+            $accountRoutes->handle($requestMethod, $requestPath);
+            return;
+        }
+
 
         // 2. Sau này thêm route khác ở đây...
         // Ví dụ: ProductRoutes, UserRoutes,...

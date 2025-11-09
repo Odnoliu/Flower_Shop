@@ -2,52 +2,54 @@
 
 namespace App\Controllers;
 
-use App\Models\AuthorizationModel;
+use App\Models\AccountModel;
 
-class AuthorizationController {
+class AccountController {
     private $model;
 
     public function __construct() {
-        $this->model = new AuthorizationModel();
+        $this->model = new AccountModel();
     }
 
     public function index() {
-        $authorizations = $this->model->readAll();
-        $this->jsonResponse($authorizations);
+        $accounts = $this->model->readAll();
+        $this->jsonResponse($accounts);
     }
     
-    public function createAuthorization(){
+    public function createAccount(){
         $data = json_decode(file_get_contents('php://input'), true);
-        if (isset($data['AUTHORIZATION_Name']) && !empty($data['AUTHORIZATION_Name'])) {
-            $id = $this->model->create($data['AUTHORIZATION_Name']);
+        if (isset($data['USER_Phone']) && !empty($data['USER_Phone']) &&
+            isset($data['ACCOUNT_Password']) && !empty($data['ACCOUNT_Password'])) {
+            $id = $this->model->create($data['USER_Phone'], $data['ACCOUNT_Password']);
             $this->jsonResponse([
                 'success' => true,
-                'AUTHORIZATION_Id' => $id,
-                'AUTHORIZATION_Name' => $data['AUTHORIZATION_Name']
+                'ACCOUNT_Id' => $id,
+                'USER_Phone' => $data['USER_Phone'],
+                'ACCOUNT_Password' => $data['ACCOUNT_Password']
             ], 201);
         } else {
             $this->jsonResponse(['error' => 'Invalid data'], 400);
         }
     }
 
-    public function readAuthorizationById($id) {
+    public function readAccountById($id) {
         $authorization = $this->model->readById($id);
         if ($authorization) {
             $this->jsonResponse($authorization);
         } else {
-            $this->jsonResponse(['error' => 'Authorization not found'], 404);
+            $this->jsonResponse(['error' => 'Account not found'], 404);
         }
     }
 
-    public function updateAuthorization($id) {
+    public function updateAccount($id) {
         $data = json_decode(file_get_contents('php://input'), true);
-        if (isset($data['AUTHORIZATION_Name']) && !empty($data['AUTHORIZATION_Name'])) {
-            $success = $this->model->update($id, $data['AUTHORIZATION_Name']);
+        if (isset($data['ACCOUNT_Password']) && !empty($data['ACCOUNT_Password'])) {
+            $success = $this->model->update($id, $data['ACCOUNT_Password']);
             if ($success) {
                 $this->jsonResponse([
                     'success' => true,
-                    'AUTHORIZATION_Id' => $id,
-                    'AUTHORIZATION_Name' => $data['AUTHORIZATION_Name']
+                    'ACCOUNT_Id' => $id,
+                    'ACCOUNT_Password' => $data['ACCOUNT_Password']
                 ]);
             } else {
                 $this->jsonResponse(['error' => 'Update failed'], 500);
@@ -57,7 +59,7 @@ class AuthorizationController {
         }
     }
 
-    public function deleteAuthorization($id) {
+    public function deleteAccount($id) {
         $success = $this->model->delete($id);
         if ($success) {
             $this->jsonResponse(['success' => true]);
