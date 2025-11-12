@@ -26,6 +26,50 @@ class Router
             }
         }
 
+        if (preg_match('#^/authorization(/.*)?$#', $requestPath)) {
+            $authorizationRoutes = new AuthorizationRoutes();
+            $authorizationRoutes->handle($requestMethod, $requestPath);
+            return;
+        }
+
+        if(preg_match('#^/user(/.*)?$#', $requestPath)){
+            $userRoutes = new UserRoutes();
+            $userRoutes->handle($requestMethod, $requestPath);
+            return;
+        }
+
+        if (preg_match('#^/users/email/.+$#', $requestPath)) {
+            $userRoutes = new UserRoutes();
+            $userRoutes->handle($requestMethod, $requestPath);
+            return;
+        }
+
+        if(preg_match('#^/ward(/.*)?$#', $requestPath)){
+            $wardRoutes = new WardRoutes();
+            $wardRoutes->handle($requestMethod, $requestPath);
+            return;
+        }
+
+        if (preg_match('#^/authorized(/.*)?$#', $requestPath)) {
+            $authorizedRoutes = new AuthorizedRoutes();
+            $authorizedRoutes->handle($requestMethod, $requestPath);
+            return;
+        }
+
+        if (preg_match('#^/account(/.*)?$#', $requestPath)) {
+            $accountRoutes = new AccountRoutes();
+            $accountRoutes->handle($requestMethod, $requestPath);
+            return;
+        }
+
+        if (preg_match('#^/address(/.*)?$#', $requestPath)) {
+            $addressRoutes = new AddressRoutes();
+            $addressRoutes->handle($requestMethod, $requestPath);
+            return;
+        }
+        // 2. Sau này thêm route khác ở đây...
+        // Ví dụ: ProductRoutes, UserRoutes,...
+
         http_response_code(404);
         header('Content-Type: application/json');
         echo json_encode(['error' => 'API endpoint not found']);
