@@ -67,6 +67,12 @@ class Router
             $addressRoutes->handle($requestMethod, $requestPath);
             return;
         }
+
+        if (preg_match('#^/status(/.*)?$#', $requestPath)) {
+            $statusRoutes = new StatusRoutes();
+            $statusRoutes->handle($requestMethod, $requestPath);
+            return;
+        }        
         // 2. Sau này thêm route khác ở đây...
         // Ví dụ: ProductRoutes, UserRoutes,...
 

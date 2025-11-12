@@ -43,15 +43,6 @@ class AddressRoutes
             }
         }
 
-        if (preg_match('#^/address/user/(\d{10})$#', $path, $matches)) {
-            $phone = $matches[1];
-
-            if ($method == 'GET') {
-                $this->controller->readAddressesByUserPhone($phone);
-                return;
-            }
-        }
-
         $this->notFound();
     }
 
