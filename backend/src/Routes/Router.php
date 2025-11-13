@@ -15,6 +15,7 @@ class Router
             '#^/authorization(/.*)?$#' => AuthorizationRoutes::class,
             '#^/ward(/.*)?$#'          => WardRoutes::class,
             '#^/user(/.*)?$#'          => UserRoutes::class,
+            '#^/order(/.*)?$#'         => OrderRoutes::class,
             // Add new route here >>
         ];
 
@@ -85,6 +86,7 @@ class Router
             $imageRoutes->handle($requestMethod, $requestPath);
             return;
         }
+
         // 2. Sau này thêm route khác ở đây...
         // Ví dụ: ProductRoutes, UserRoutes,...
 
