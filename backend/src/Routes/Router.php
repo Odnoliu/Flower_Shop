@@ -13,8 +13,11 @@ class Router
         $routes = [
             '#^/city(/.*)?$#'          => CityRoutes::class,
             '#^/authorization(/.*)?$#' => AuthorizationRoutes::class,
+            '#^/authorized(/.*)?$#'    => AuthorizedRoutes::class,
+            '#^/account(/.*)?$#'       => AccountRoutes::class,
             '#^/ward(/.*)?$#'          => WardRoutes::class,
             '#^/user(/.*)?$#'          => UserRoutes::class,
+            '#^/order/(\d+)/detail(/.*)?$#' => OrderDetailRoutes::class,
             '#^/order(/.*)?$#'         => OrderRoutes::class,
             // Add new route here >>
         ];
@@ -25,12 +28,6 @@ class Router
                 $handler->handle($requestMethod, $requestPath);
                 return;
             }
-        }
-
-        if (preg_match('#^/authorization(/.*)?$#', $requestPath)) {
-            $authorizationRoutes = new AuthorizationRoutes();
-            $authorizationRoutes->handle($requestMethod, $requestPath);
-            return;
         }
 
         if(preg_match('#^/user(/.*)?$#', $requestPath)){
@@ -48,18 +45,6 @@ class Router
         if(preg_match('#^/ward(/.*)?$#', $requestPath)){
             $wardRoutes = new WardRoutes();
             $wardRoutes->handle($requestMethod, $requestPath);
-            return;
-        }
-
-        if (preg_match('#^/authorized(/.*)?$#', $requestPath)) {
-            $authorizedRoutes = new AuthorizedRoutes();
-            $authorizedRoutes->handle($requestMethod, $requestPath);
-            return;
-        }
-
-        if (preg_match('#^/account(/.*)?$#', $requestPath)) {
-            $accountRoutes = new AccountRoutes();
-            $accountRoutes->handle($requestMethod, $requestPath);
             return;
         }
 

@@ -4,14 +4,17 @@ namespace App\Controllers;
 
 use App\Models\OrderModel;
 use App\Models\OrderDetailModel;
+use App\Models\PriceModel;
 
 class OrderController {
     private $model;
     private $detailModel;
+    private $priceModel;
 
     public function __construct() {
         $this->model = new OrderModel();
         $this->detailModel = new OrderDetailModel();
+        $this->priceModel = new PriceModel();
     }
 
     public function index() {
@@ -23,24 +26,24 @@ class OrderController {
         $json = json_decode(file_get_contents('php://input'), true);
         $data = $json['data'];
         $detail = $json['detail'];
-        if (isset($data['ORDER_CreatedDate']) && !empty($data['ORDER_CreatedDate']) &&
-            isset($data['USER_Phone']) && !empty($data['USER_Phone']) &&
-            isset($data['ORDER_Total']) && !empty($data['ORDER_Total'])) {
-            $id = $this->model->create($data['ORDER_CreatedDate'], $data['USER_Phone'], $data['ORDER_Total']);
+        if (isset($data['USER_Phone']) && !empty($data['USER_Phone'])) {
+
+            $today = date('Y-m-d');
+            $id = $this->model->create($today, $data['USER_Phone']);
             
 
             if (!empty($detail) && is_array($detail)) {
                 foreach ($detail as $item) {
                     if (
                         isset($item['PRODUCT_Id']) && !empty($item['PRODUCT_Id']) &&
-                        isset($item['ORDERDETAIL_Quantity']) && !empty($item['ORDERDETAIL_Quantity']) &&
-                        isset($item['ORDERDETAIL_Price']) && !empty($item['ORDERDETAIL_Price'])
+                        isset($item['ORDERDETAIL_Quantity']) && !empty($item['ORDERDETAIL_Quantity'])
                     ) {
+                        $price = $this->priceModel->getPrice($item['PRODUCT_Id'], $today);
                         $this->detailModel->create(
                             $id,
                             $item['PRODUCT_Id'],
                             $item['ORDERDETAIL_Quantity'],
-                            $item['ORDERDETAIL_Price']
+                            $price
                         );
                     } else {
                         $this->model->delete($id); // Rollback order creation
@@ -49,12 +52,15 @@ class OrderController {
                 }
             }
 
+            $total = $this->model->getTotal($id);
+            $this->model->setTotal($id, $total);
+
             $this->jsonResponse([
                 'success' => true,
                 'ORDER_Id' => $id,
-                'ORDER_CreatedDate' => $data['ORDER_CreatedDate'],
+                'ORDER_CreatedDate' => $today,
                 'USER_Phone' => $data['USER_Phone'],
-                'ORDER_Total' => $data['ORDER_Total'],
+                'ORDER_Total' => $total,
                 'STATUS_Id' => 1
             ], 201);
         } else {
@@ -73,18 +79,14 @@ class OrderController {
 
     public function updateOrder($id) {
         $data = json_decode(file_get_contents('php://input'), true);
-        if (isset($data['ORDER_CreatedDate']) && !empty($data['ORDER_CreatedDate']) &&
-            isset($data['USER_Phone']) && !empty($data['USER_Phone']) &&
-            isset($data['ORDER_Total']) && !empty($data['ORDER_Total']) &&
+        if (isset($data['USER_Phone']) && !empty($data['USER_Phone']) &&
             isset($data['STATUS_Id']) && !empty($data['STATUS_Id'])) {
-            $success = $this->model->update($id, $data['USER_Phone'], $data['ORDER_Total'], $data['STATUS_Id']);
+            $success = $this->model->update($id, $data['USER_Phone'], $data['STATUS_Id']);
             if ($success) {
                 $this->jsonResponse([
                     'success' => true,
                     'ORDER_Id' => $id,
-                    'ORDER_CreatedDate' => $data['ORDER_CreatedDate'],
                     'USER_Phone' => $data['USER_Phone'],
-                    'ORDER_Total' => $data['ORDER_Total'],
                     'STATUS_Id' => $data['STATUS_Id']
                 ]);
             } else {

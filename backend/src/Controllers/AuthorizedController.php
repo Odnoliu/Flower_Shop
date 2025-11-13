@@ -12,8 +12,8 @@ class AuthorizedController {
     }
 
     public function index() {
-        $cities = $this->model->readAll();
-        $this->jsonResponse($cities);
+        $authorized = $this->model->readAll();
+        $this->jsonResponse($authorized);
     }
     
     public function createAuthorized(){

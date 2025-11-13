@@ -94,6 +94,23 @@ class PriceModel {
 
         return $stmt->execute();
     }
+
+    public function getPrice($productId, $date) {
+        $stmt = $this->pdo->prepare("
+            SELECT PRICE_Price
+            FROM price
+            WHERE PRODUCT_Id = :productId
+              AND PRICE_EffectiveDate <= :date
+            ORDER BY PRICE_EffectiveDate DESC
+            LIMIT 1
+        ");
+
+        $stmt->bindParam(':productId', $productId, PDO::PARAM_INT);
+        $stmt->bindParam(':date', $date, PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+    }
 }
 
 ?>
