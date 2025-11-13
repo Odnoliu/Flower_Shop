@@ -9,7 +9,7 @@ drop table if exists cart;
 drop table if exists authorized;
 drop table if exists authorization;
 drop table if exists account;
-drop table if exists order_detail;
+drop table if exists orderdetail;
 drop table if exists orders;
 drop table if exists status;
 drop table if exists price;
@@ -164,21 +164,22 @@ insert into orders (ORDER_CreatedDate, ORDER_Total, STATUS_Id, USER_Phone) value
 ('2025-10-03', 35000.00, 3, '0933343434'),
 ('2025-10-04', 35000.00, 4, '0944454545');
 
-create table order_detail (
+create table orderdetail (
     ORDER_Id int not null,
     PRODUCT_Id int not null,
     ORDERDETAIL_Quantity int not null,
+    ORDERDETAIL_Price decimal(15,2) not null,
     primary key (ORDER_Id, PRODUCT_Id),
     foreign key (ORDER_Id) references orders(ORDER_Id) on delete cascade on update cascade,
     foreign key (PRODUCT_Id) references product(PRODUCT_Id) on delete cascade on update cascade
 )ENGINE=InnoDB;
 
-insert into order_detail (ORDER_Id, PRODUCT_Id, ORDERDETAIL_Quantity) values
-(1, 1, 1),
-(1, 2, 1),
-(2, 3, 2),
-(3, 4, 1),
-(4, 4, 1);
+insert into orderdetail (ORDER_Id, PRODUCT_Id, ORDERDETAIL_Quantity, ORDERDETAIL_Price) values
+(1, 1, 1, 55000.00),
+(1, 2, 1, 65000.00),
+(2, 3, 2, 45000.00),
+(3, 4, 1, 35000.00),
+(4, 4, 1, 35000.00);
 
 create table account (
     ACCOUNT_Id int auto_increment primary key,
