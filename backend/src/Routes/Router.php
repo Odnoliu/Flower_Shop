@@ -73,6 +73,12 @@ class Router
             $statusRoutes->handle($requestMethod, $requestPath);
             return;
         }        
+
+        if (preg_match('#^/price(/.*)?$#', $requestPath)) {
+            $priceRoutes = new PriceRoutes();
+            $priceRoutes->handle($requestMethod, $requestPath);
+            return;
+        }
         // 2. Sau này thêm route khác ở đây...
         // Ví dụ: ProductRoutes, UserRoutes,...
 
