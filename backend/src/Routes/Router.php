@@ -79,6 +79,12 @@ class Router
             $priceRoutes->handle($requestMethod, $requestPath);
             return;
         }
+
+        if (preg_match('#^/image(/.*)?$#', $requestPath)) {
+            $imageRoutes = new ImageRoutes();
+            $imageRoutes->handle($requestMethod, $requestPath);
+            return;
+        }
         // 2. Sau này thêm route khác ở đây...
         // Ví dụ: ProductRoutes, UserRoutes,...
 
