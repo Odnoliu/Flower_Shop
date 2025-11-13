@@ -19,6 +19,7 @@ class Router
             '#^/user(/.*)?$#'          => UserRoutes::class,
             '#^/order/(\d+)/detail(/.*)?$#' => OrderDetailRoutes::class,
             '#^/order(/.*)?$#'         => OrderRoutes::class,
+            '#^/cart(/.*)?$#'          => CartRoutes::class,
             // Add new route here >>
         ];
 

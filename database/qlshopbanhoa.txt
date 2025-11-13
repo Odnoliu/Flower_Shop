@@ -220,9 +220,13 @@ insert into authorized (ACCOUNT_Id, AUTHORIZATION_Id) values
 (4, 4);
 
 create table cart (
-    USER_Phone varchar(10) not null,
-    PRODUCT_Id int not null,
+    CART_Id int auto_increment primary key,
     CART_Quantity int not null,
-    foreign key (USER_Phone) references user(USER_Phone) on delete cascade on update cascade,
+    ACCOUNT_Id int not null,
+    PRODUCT_Id int not null,
+    foreign key (ACCOUNT_Id) references account(ACCOUNT_Id) on delete cascade on update cascade,
     foreign key (PRODUCT_Id) references product(PRODUCT_Id) on delete cascade on update cascade
 )ENGINE=InnoDB;
+
+insert into cart (ACCOUNT_Id, PRODUCT_Id, CART_Quantity) values
+(1, 1, 2);
