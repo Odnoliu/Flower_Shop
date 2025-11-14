@@ -73,6 +73,11 @@ class Router
             return;
         }
 
+        if (preg_match('#^/type(/.*)?$#', $requestPath)) {
+            $typeRoutes = new TypeRoutes();
+            $typeRoutes->handle($requestMethod, $requestPath);
+            return;
+        }
         // 2. Sau này thêm route khác ở đây...
         // Ví dụ: ProductRoutes, UserRoutes,...
 
