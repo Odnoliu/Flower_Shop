@@ -101,7 +101,7 @@ insert into type (TYPE_Name) values
 create table product (
     PRODUCT_Id int auto_increment primary key,
     PRODUCT_Name varchar(255) not null,
-    PRODUCT_Avartar blob default null,
+    PRODUCT_Avatar blob default null,
     TYPE_Id int not null,
     foreign key (TYPE_Id) references type(TYPE_Id) on delete cascade on update cascade
 )ENGINE=InnoDB;
