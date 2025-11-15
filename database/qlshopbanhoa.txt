@@ -10,6 +10,7 @@ drop table if exists authorized;
 drop table if exists authorization;
 drop table if exists account;
 drop table if exists orderdetail;
+drop table if exists order-detail;
 drop table if exists orders;
 drop table if exists status;
 drop table if exists price;
