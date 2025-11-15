@@ -14,7 +14,7 @@ class ProductController
     }
 
     private function jsonResponse($data, $status = 200)
-    {
+    {   
         http_response_code($status);
         header('Content-Type: application/json');
         echo json_encode($data);
@@ -24,6 +24,15 @@ class ProductController
     public function index()
     {
         $result = $this->model->readAll();
+
+        foreach ($result['products'] as &$product) {
+            if (!empty($product['PRODUCT_Avartar'])) {
+                $product['PRODUCT_Avartar'] = 'data:image/png;base64,' . base64_encode($product['PRODUCT_Avartar']);
+            } else {
+                $product['PRODUCT_Avartar'] = null;
+            }
+        }
+
         $this->jsonResponse($result);
     }
 
@@ -41,7 +50,7 @@ class ProductController
 
             if (isset($data['PRODUCT_Avartar']) && !empty($data['PRODUCT_Avartar'])) {
                 $avatar = $this->decodeBase64Image($data['PRODUCT_Avartar']);
-                if ($avatar === false) {
+                if ($avatar == false) {
                     $this->jsonResponse(['error' => 'Invalid image format'], 400);
                 }
             }
@@ -131,7 +140,7 @@ class ProductController
         }
 
         $imageData = base64_decode($matches[2]);
-        if ($imageData === false) {
+        if ($imageData == false) {
             return false;
         }
 

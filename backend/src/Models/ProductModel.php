@@ -39,7 +39,10 @@ class ProductModel
             ORDER BY p.PRODUCT_Name ASC
         ");
         $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+        error_log("=== DEBUG readAll() - Products ===");
+        error_log(print_r($products, true));
+        error_log("Total products: " . $total);
+        error_log("=====================================");
         return [
             'total' => $total,
             'products' => $products
