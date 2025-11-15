@@ -11,7 +11,7 @@ class ImageController {
         $this->model = new ImageModel();
     }
 
-    // JSON response helper
+
     private function jsonResponse($data, $status = 200) {
         http_response_code($status);
         header('Content-Type: application/json');
@@ -19,61 +19,87 @@ class ImageController {
         exit;
     }
 
-    // GET /image -> list metadata only
     public function index(){
-        $images = $this->model->readAll();
-
-        // Remove blob if present and keep lightweight metadata
-        if (isset($images['images']) && is_array($images['images'])) {
-            foreach ($images['images'] as &$img) {
-                if (isset($img['IMAGE_Image'])) unset($img['IMAGE_Image']);
+        $result = $this->model->readAll();
+        foreach ($result['images'] as &$image) {
+            if (!empty($image['IMAGE_Image'])) {
+                $image['IMAGE_Image'] = 'data:image/png;base64,' . base64_encode($image['IMAGE_Image']);
+            } else {
+                $image['IMAGE_Image'] = null;
             }
         }
 
-        $this->jsonResponse($images);
+        $this->jsonResponse($result);
     }
 
-    // Create image - supports JSON (base64) OR multipart/form-data (file)
-    public function createImage(){
-        // 1) multipart/form-data + file
-        if (!empty($_FILES['IMAGE_Image']) && $_FILES['IMAGE_Image']['error'] === UPLOAD_ERR_OK) {
+    public function createImage()
+    {
+        if (!empty($_FILES['IMAGE_Image']) && $_FILES['IMAGE_Image']['error'] == UPLOAD_ERR_OK) {
             $tmp = $_FILES['IMAGE_Image']['tmp_name'];
             $imageBinary = file_get_contents($tmp);
             $productId = isset($_POST['PRODUCT_Id']) ? (int)$_POST['PRODUCT_Id'] : null;
 
-            if ($productId === null) {
-                $this->jsonResponse(['error' => 'PRODUCT_Id is required (form-data)'], 400);
+            if ($productId == null || $productId <= 0) {
+                $this->jsonResponse(['error' => 'PRODUCT_Id is required and must be valid (form-data)'], 400);
             }
 
             $created = $this->model->create($imageBinary, $productId);
-            if ($created) $this->jsonResponse(['success' => true, 'PRODUCT_Id' => $productId], 201);
-            else $this->jsonResponse(['error' => 'Create failed'], 500);
+            if ($created) {
+                $this->jsonResponse(['success' => true, 'PRODUCT_Id' => $productId], 201);
+            } else {
+                $this->jsonResponse(['error' => 'Create failed'], 500);
+            }
+            return;
         }
 
-        // 2) JSON body (base64)
         $raw = file_get_contents('php://input');
         $data = json_decode($raw, true);
 
-        // If body is present but invalid JSON, return.
-        if (!empty($raw) && json_last_error() !== JSON_ERROR_NONE) {
+        if (!empty($raw) && json_last_error() != JSON_ERROR_NONE) {
             $this->jsonResponse(['error' => 'Invalid JSON body', 'json_error' => json_last_error_msg()], 400);
         }
 
         if ($data && isset($data['IMAGE_Image']) && isset($data['PRODUCT_Id'])) {
             $productId = (int)$data['PRODUCT_Id'];
-            $imageBase64 = $data['IMAGE_Image'];
+            if ($productId <= 0) {
+                $this->jsonResponse(['error' => 'PRODUCT_Id must be a positive integer'], 400);
+            }
 
-            $imageBinary = base64_decode($imageBase64, true);
-            if ($imageBinary === false) {
-                $this->jsonResponse(['error' => 'IMAGE_Image is not valid base64'], 400);
+            $imageInput = $data['IMAGE_Image'];
+
+            // HÀM GIẢI MÃ: Hỗ trợ cả base64 thuần và data:image/...
+            $imageBinary = $this->decodeImageData($imageInput);
+            if ($imageBinary == false) {
+                $this->jsonResponse(['error' => 'IMAGE_Image is not valid (must be base64 or data:image/...;base64,...)'], 400);
             }
 
             $created = $this->model->create($imageBinary, $productId);
-            if ($created) $this->jsonResponse(['success' => true, 'PRODUCT_Id' => $productId], 201);
-            else $this->jsonResponse(['error' => 'Create failed'], 500);
+            if ($created) {
+                $this->jsonResponse(['success' => true, 'PRODUCT_Id' => $productId], 201);
+            } else {
+                $this->jsonResponse(['error' => 'Create failed'], 500);
+            }
+            return;
         }
 
-        $this->jsonResponse(['error' => 'Invalid request. Send multipart/form-data (file) or application/json (base64).'], 400);
+        $this->jsonResponse([
+            'error' => 'Invalid request',
+            'hint' => 'Use multipart/form-data (file + PRODUCT_Id) or application/json (IMAGE_Image base64 + PRODUCT_Id)'
+        ], 400);
+    }
+
+    private function decodeImageData($input)
+    {
+        $input = trim($input);
+        if (preg_match('#^data:image/(\w+);base64,(.*)$#i', $input, $matches)) {
+            $base64 = $matches[2];
+        }
+        else {
+            $base64 = $input;
+        }
+
+        $binary = base64_decode($base64, true);
+        return $binary !== false ? $binary : false;
     }
 
     // GET /image/{id} where id is numeric -> return raw binary image directly
@@ -110,7 +136,6 @@ class ImageController {
         exit;
     }
 
-    // GET /image/{keyword} where keyword is non-numeric -> search metadata
     public function readImageByInfo($keyword){
         $result = $this->model->readByInfo($keyword);
         if ($result) {
@@ -123,58 +148,61 @@ class ImageController {
         }
     }
 
-    // Update image - supports JSON (base64) or multipart/form-data
-    public function updateImage($id){
-        if (!is_numeric($id)) {
-            $this->jsonResponse(['error' => 'Invalid id'], 400);
+    public function updateImage($id)
+    {
+        if (!is_numeric($id) || $id <= 0) {
+            $this->jsonResponse(['error' => 'Invalid IMAGE_Id in URL'], 400);
         }
         $id = (int)$id;
 
-        // Fetch current data
-        $current = $this->model->readImageById($id);
-        if (!$current) $this->jsonResponse(['error' => 'Image not found'], 404);
-
-        // multipart/form-data
-        if (!empty($_FILES['IMAGE_Image']) && $_FILES['IMAGE_Image']['error'] === UPLOAD_ERR_OK) {
-            $tmp = $_FILES['IMAGE_Image']['tmp_name'];
-            $imageBinary = file_get_contents($tmp);
-            $productId = isset($_POST['PRODUCT_Id']) ? (int)$_POST['PRODUCT_Id'] : (int)$current['PRODUCT_Id'];
-
-            $success = $this->model->update($id, $imageBinary, $productId);
-            if ($success) $this->jsonResponse(['success' => true]);
-            else $this->jsonResponse(['error' => 'Update failed'], 500);
-        }
-
-        // JSON body
+        // === 2. Đọc JSON body ===
         $raw = file_get_contents('php://input');
         $data = json_decode($raw, true);
+
         if (!empty($raw) && json_last_error() !== JSON_ERROR_NONE) {
-            $this->jsonResponse(['error' => 'Invalid JSON body', 'json_error' => json_last_error_msg()], 400);
+            $this->jsonResponse(['error' => 'Invalid JSON', 'detail' => json_last_error_msg()], 400);
         }
 
-        if (empty($data) && empty($_FILES)) {
-            $this->jsonResponse(['error' => 'No data to update'], 400);
+        if (!$data) {
+            $this->jsonResponse(['error' => 'Request body is required'], 400);
         }
 
-        $imageBinary = $current['IMAGE_Image'];
-        $productId = (int)$current['PRODUCT_Id'];
+        // === 3. Validate PRODUCT_Id ===
+        if (!isset($data['PRODUCT_Id']) || !is_numeric($data['PRODUCT_Id']) || $data['PRODUCT_Id'] <= 0) {
+            $this->jsonResponse(['error' => 'PRODUCT_Id is required and must be a positive integer'], 400);
+        }
+        $productId = (int)$data['PRODUCT_Id'];
 
-        if (!empty($data)) {
-            if (isset($data['IMAGE_Image']) && $data['IMAGE_Image'] !== '') {
-                $decoded = base64_decode($data['IMAGE_Image'], true);
-                if ($decoded === false) $this->jsonResponse(['error' => 'IMAGE_Image is not valid base64'], 400);
-                $imageBinary = $decoded;
+        // === 4. Xử lý IMAGE_Image (có thể null hoặc base64) ===
+        $imageBinary = null;
+
+        if (isset($data['IMAGE_Image']) && $data['IMAGE_Image'] !== null) {
+            $imageInput = $data['IMAGE_Image'];
+
+            // Hỗ trợ: data:image/png;base64,... hoặc base64 thuần
+            $imageBinary = $this->decodeImageData($imageInput);
+            if ($imageBinary === false) {
+                $this->jsonResponse(['error' => 'IMAGE_Image is not valid base64'], 400);
             }
-            if (isset($data['PRODUCT_Id']) && $data['PRODUCT_Id'] !== '') {
-                if (!is_numeric($data['PRODUCT_Id'])) $this->jsonResponse(['error' => 'PRODUCT_Id must be numeric'], 400);
-                $productId = (int)$data['PRODUCT_Id'];
-            }
         }
+        // Nếu IMAGE_Image = null → xóa ảnh
 
+        // === 5. Gọi Model để cập nhật ===
         $success = $this->model->update($id, $imageBinary, $productId);
-        if ($success) $this->jsonResponse(['success' => true]);
-        else $this->jsonResponse(['error' => 'Update failed'], 500);
+
+        if ($success) {
+            $this->jsonResponse([
+                'success' => true,
+                'message' => 'Image updated successfully',
+                'IMAGE_Id' => $id,
+                'PRODUCT_Id' => $productId
+            ], 200);
+        } else {
+            $this->jsonResponse(['error' => 'Update failed. Image not found or database error.'], 500);
+        }
     }
+
+
 
     // Delete image
     public function deleteImage($id){

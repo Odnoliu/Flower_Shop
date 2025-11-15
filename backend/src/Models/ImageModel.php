@@ -26,20 +26,21 @@ class ImageModel {
 
 
     public function readAll() {
-        $countStmt = $this->pdo->prepare("
+        $countStmt = $this->pdo->query("
             SELECT COUNT(*) FROM image
         ");
-        $countStmt->execute();
         $total = (int)$countStmt->fetchColumn();
 
-        $stmt = $this->pdo->prepare("
+        $stmt = $this->pdo->query("
             SELECT IMAGE_Id, PRODUCT_Id, IMAGE_Image
             FROM image
             ORDER BY IMAGE_Id ASC
         ");
-        $stmt->execute();
         $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+        error_log("=== DEBUG readAll() - Images ===");
+        error_log(print_r($images, true));
+        error_log("Total products: " . $total);
+        error_log("=====================================");
         return [
             'total' => $total,
             'images' => $images

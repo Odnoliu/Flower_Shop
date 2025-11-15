@@ -15,42 +15,37 @@ class ImageRoutes
 
     public function handle($method, $path)
     {
-        // Exact /image -> list or create
-        if ($path === '/image') {
-            if ($method === 'GET') {
+
+        if ($path == '/image') {
+            if ($method == 'GET') {
                 $this->controller->index();
                 return;
             }
-            if ($method === 'POST') {
+            if ($method == 'POST') {
                 $this->controller->createImage();
                 return;
             }
         }
 
-        // /image/id/{id} -> return raw binary image
         if (preg_match('#^/image/id/(\d+)$#', $path, $matches)) {
             $id = (int)$matches[1];
-            if ($method === 'GET') {
+            if ($method == 'GET') {
                 $this->controller->readImageById($id);
                 return;
             }
-            // PUT/DELETE should use /image/{id} (without "id" segment)
             $this->notFound();
             return;
         }
 
-        // /image/{keyword} -> search (GET) OR update/delete by numeric id (PUT/DELETE)
         if (preg_match('#^/image/([^/]+)$#', $path, $matches)) {
             $keyword = urldecode($matches[1]);
 
-            if ($method === 'GET') {
-                // search by keyword (could be numeric or text)
+            if ($method == 'GET') {
                 $this->controller->readImageByInfo($keyword);
                 return;
             }
 
-            if ($method === 'PUT' || $method === 'DELETE') {
-                // update/delete require numeric IMAGE_Id
+            if ($method == 'PUT' || $method == 'DELETE') {
                 if (!is_numeric($keyword)) {
                     $this->notFound();
                     return;
@@ -58,12 +53,12 @@ class ImageRoutes
 
                 $id = (int)$keyword;
 
-                if ($method === 'PUT') {
+                if ($method == 'PUT') {
                     $this->controller->updateImage($id);
                     return;
                 }
 
-                if ($method === 'DELETE') {
+                if ($method == 'DELETE') {
                     $this->controller->deleteImage($id);
                     return;
                 }
