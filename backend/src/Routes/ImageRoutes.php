@@ -33,25 +33,12 @@ class ImageRoutes
                 $this->controller->readImageById($id);
                 return;
             }
-            $this->notFound();
-            return;
-        }
-
-        if (preg_match('#^/image/([^/]+)$#', $path, $matches)) {
-            $keyword = urldecode($matches[1]);
-
-            if ($method == 'GET') {
-                $this->controller->readImageByInfo($keyword);
-                return;
-            }
 
             if ($method == 'PUT' || $method == 'DELETE') {
-                if (!is_numeric($keyword)) {
+                if (!is_numeric($id)) {
                     $this->notFound();
                     return;
                 }
-
-                $id = (int)$keyword;
 
                 if ($method == 'PUT') {
                     $this->controller->updateImage($id);
@@ -62,6 +49,15 @@ class ImageRoutes
                     $this->controller->deleteImage($id);
                     return;
                 }
+            }
+        }
+
+        if (preg_match('#^/image/product/([^/]+)$#', $path, $matches)) {
+            $keyword = urldecode($matches[1]);
+
+            if ($method == 'GET') {
+                $this->controller->readImageByProduct($keyword);
+                return;
             }
         }
 

@@ -47,7 +47,7 @@ class ImageModel {
         ];
     }
 
-    public function readImageById($id) {
+    public function readById($id) {
         $stmt = $this->pdo->prepare("
             SELECT IMAGE_Id, PRODUCT_Id, IMAGE_Image
             FROM image
@@ -56,8 +56,30 @@ class ImageModel {
         ");
         $stmt->bindParam(':id', $id, PDO::PARAM_STR);
         $stmt->execute();
+        $image = $stmt->fetch(PDO::FETCH_ASSOC);
+        error_log("=== DEBUG readById() - Images ===");
+        error_log(print_r($image, true));
+        error_log("=====================================");        
+        return $image;
+    }
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function readByProduct($productId){
+        $stmt = $this->pdo->prepare("
+            SELECT IMAGE_Id, PRODUCT_Id, IMAGE_Image
+            FROM image
+            WHERE PRODUCT_Id = :productId
+            ORDER BY IMAGE_Id ASC
+        ");
+        $stmt->bindParam(':productId', $productId, PDO::PARAM_STR);
+        $stmt->execute();
+        $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        error_log("=== DEBUG readByProduct() - Images ===");
+        error_log(print_r($images, true));
+        error_log("=====================================");       
+        return [
+            'total' => count($images),
+            'images' => $images,
+        ];
     }
 
     public function update($id, $imageData, $productId) {

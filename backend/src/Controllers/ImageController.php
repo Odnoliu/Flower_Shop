@@ -102,50 +102,34 @@ class ImageController {
         return $binary !== false ? $binary : false;
     }
 
-    // GET /image/{id} where id is numeric -> return raw binary image directly
-    // If id is not numeric, use readImageByInfo (search)
     public function readImageById($id){
-        if (!is_numeric($id)) {
-            $this->jsonResponse(['error' => 'Invalid id'], 400);
+        $image = $this->model->readById($id);
+        if (!empty($image['IMAGE_Image'])) {
+            $image['IMAGE_Image'] = 'data:image/png;base64,' . base64_encode($image['IMAGE_Image']);
+        } else {
+            $image['IMAGE_Image'] = null;
         }
-
-        $record = $this->model->readImageById((int)$id);
-        if (!$record) {
-            $this->jsonResponse(['error' => 'Image not found'], 404);
-        }
-
-        if (!isset($record['IMAGE_Image']) || $record['IMAGE_Image'] === null) {
-            $this->jsonResponse(['error' => 'Image binary not found'], 404);
-        }
-
-        $binary = $record['IMAGE_Image'];
-
-        // Detect MIME type
-        $finfo = new \finfo(FILEINFO_MIME_TYPE);
-        $mime = $finfo->buffer($binary);
-        if ($mime === false) $mime = 'application/octet-stream';
-
-        // Send binary directly
-        http_response_code(200);
-        header('Content-Type: ' . $mime);
-        header('Content-Length: ' . strlen($binary));
-        if (isset($record['IMAGE_Id'])) {
-            header('Content-Disposition: inline; filename="image_' . $record['IMAGE_Id'] . '"');
-        }
-        echo $binary;
-        exit;
+        $this->jsonResponse($image);
     }
 
-    public function readImageByInfo($keyword){
-        $result = $this->model->readByInfo($keyword);
-        if ($result) {
-            foreach ($result as &$r) {
-                if (isset($r['IMAGE_Image'])) unset($r['IMAGE_Image']);
-            }
-            $this->jsonResponse($result);
-        } else {
-            $this->jsonResponse(['error' => 'No records found'], 404);
+    public function readImageByProduct($productId)
+    {
+        if (!is_numeric($productId) || $productId <= 0) {
+            $this->jsonResponse(['error' => 'Invalid PRODUCT_Id'], 400);
         }
+
+        $result = $this->model->readByProduct((int)$productId);
+
+        // BÂY GIỜ $result['images'] LÀ MẢNG → foreach() HOÀN TOÀN OK
+        foreach ($result['images'] as &$image) {
+            if (!empty($image['IMAGE_Image'])) {
+                $image['IMAGE_Image'] = 'data:image/png;base64,' . base64_encode($image['IMAGE_Image']);
+            } else {
+                $image['IMAGE_Image'] = null;
+            }
+        }
+
+        $this->jsonResponse($result);
     }
 
     public function updateImage($id)
