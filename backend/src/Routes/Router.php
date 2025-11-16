@@ -84,6 +84,12 @@ class Router
             $productRoutes->handle($requestMethod, $requestPath);
             return;
         }
+
+        if (preg_match('#^/payment(/.*)?$#', $requestPath)) {
+            $paymentRoutes = new PaymentRoutes();
+            $paymentRoutes->handle($requestMethod, $requestPath);
+            return;
+        }        
         // 2. Sau này thêm route khác ở đây...
         // Ví dụ: ProductRoutes, UserRoutes,...
 
