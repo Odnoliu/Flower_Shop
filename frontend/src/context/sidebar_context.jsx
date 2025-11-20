@@ -1,13 +1,34 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useMemo } from "react";
 
 const SidebarContext = createContext();
 
 export const SidebarProvider = ({ children }) => {
   const [isOpen, setIsOpen] = useState(true);
-  const toggleSidebar = () => setIsOpen(!isOpen);
+
+  const role =
+    typeof window != "undefined"
+      ? localStorage.getItem("role") || "user"
+      : "user";
+  const defaultActive = useMemo(() => {
+    switch (role) {
+      case "store_owner":
+        return "StoreOwner:Trang chủ";
+      case "admin":
+        return "Admin:Quản lý nhân sự";
+      case "employee":
+        return "Employee:Quản lý đơn hàng";
+      default:
+        return "Trang chủ";
+    }
+  }, [role]);
+
+  const [activePage, setActivePage] = useState(defaultActive);
+  const toggleSidebar = () => setIsOpen((s) => !s);
 
   return (
-    <SidebarContext.Provider value={{ isOpen, toggleSidebar }}>
+    <SidebarContext.Provider
+      value={{ isOpen, toggleSidebar, activePage, setActivePage }}
+    >
       {children}
     </SidebarContext.Provider>
   );

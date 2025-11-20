@@ -13,16 +13,16 @@ export default function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("isLoggedIn");
-    if (storedUser) {
+    const logged = localStorage.getItem("isLoggedIn");
+    if (logged == "true") {
       Swal.fire({
         icon: "info",
         title: "Bạn đã đăng nhập!",
         text: "Đang chuyển hướng về trang chủ...",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 1200,
       });
-      setTimeout(() => navigate("/"), 1500);
+      setTimeout(() => navigate("/"), 1200);
     }
   }, [navigate]);
 
@@ -34,22 +34,23 @@ export default function Login() {
       const response = await axiosClient.get("/user");
       const users = response.data;
       const foundUser = users.find(
-        (u) => u.phone === phone && u.password === password
+        (u) => u.phone == phone && u.password == password
       );
 
       if (foundUser) {
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("userId", foundUser.id);
+        localStorage.setItem("role", foundUser.role || "user");
+        localStorage.setItem("userName", foundUser.name || "");
+
         Swal.fire({
           icon: "success",
           title: "Đăng nhập thành công!",
           text: `Chào mừng ${foundUser.name}!`,
           showConfirmButton: false,
-          timer: 3000,
+          timer: 1200,
         });
-
-        // Chuyển hướng sau khi đăng nhập
-        setTimeout(() => navigate("/"), 3000);
+        setTimeout(() => navigate("/"), 1200);
       } else {
         Swal.fire({
           icon: "error",
@@ -146,9 +147,7 @@ export default function Login() {
             type="submit"
             disabled={loading}
             className={`w-full py-2 font-semibold rounded-lg text-white transition-all ${
-              loading
-                ? "bg-gray-400 cursor-wait"
-                : "bg-[#CDB38B] hover:bg-[#bba177]"
+              loading ? "bg-gray-400 cursor-wait" : "bg-[#CDB38B] hover:bg-[#bba177]"
             }`}
             variants={fadeInUp}
             custom={0.6}

@@ -1,16 +1,48 @@
-# React + Vite
+# Hale's Flower Shop – Admin Dashboard & Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Một dự án bán hoa đầy đủ (frontend + mock backend) được xây dựng bằng **React + Vite + TailwindCSS**, phong cách sang trọng, tinh tế và cực kỳ dễ mở rộng.
 
-Currently, two official plugins are available:
+## Tính năng nổi bật
+- Giao diện admin hiện đại (quản lý sản phẩm, đơn hàng)
+- Thêm/sửa/xóa sản phẩm (có fallback localStorage khi không có API)
+- Quản lý đơn hàng + cập nhật trạng thái realtime
+- Export danh sách đơn hàng ra CSV
+- Footer & UI siêu đẹp, animation mượt mà (Framer Motion + lucide-react)
+- Mock API bằng **json-server**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
+- React 18 + Vite
+- Tailwind CSS
+- Framer Motion
+- Axios
+- SweetAlert2
+- date-fns
+- lucide-react
+- json-server (mock backend)
 
-## React Compiler
+## Yêu cầu
+- Node.js ≥ 18
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Cài đặt & chạy dự án
 
-## Expanding the ESLint configuration
+### 1. Clone repository
+```bash
+git clone https://github.com/Odnoliu/hales-flower-shop.git
+cd hales-flower-shop
+```
+### 2. Cài dependencies
+```bash
+npm install
+```
+### 3. Chạy mock backend (json-server)
+Mở terminal thứ nhất và chạy:
+```bash
+npx json-server --watch db.json --port 3001
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 4. Chạy dự án frontend (Vite dev server)
+Mở terminal thứ hai và chạy:
+```bash
+npm run dev
+```
+Mở trình duyệt tại: http://localhost:5173

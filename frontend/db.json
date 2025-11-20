@@ -1,159 +1,177 @@
 {
-    "shop_info": {
-        "id": 1,
-        "name": "Hales Flower Shop",
-        "slogan": "Mang hương sắc thiên nhiên đến không gian của bạn",
-        "address": "123 Đường Hoa Lan, Quận Phú Nhuận, TP. Hồ Chí Minh",
-        "phone": "0909 123 456",
-        "email": "contact@halesflowershop.vn",
-        "open_hours": "07:30 - 21:00",
-        "facebook": "https://facebook.com/halesflowershop",
-        "instagram": "https://instagram.com/halesflowershop"
+  "shop_info": {
+    "id": 1,
+    "name": "Hales Flower Shop",
+    "slogan": "Mang hương sắc thiên nhiên đến không gian của bạn",
+    "address": "123 Đường Hoa Lan, Quận Phú Nhuận, TP. Hồ Chí Minh",
+    "phone": "0909 123 456",
+    "email": "contact@halesflowershop.vn",
+    "open_hours": "07:30 - 21:00",
+    "facebook": "https://facebook.com/halesflowershop",
+    "instagram": "https://instagram.com/halesflowershop"
+  },
+  "user": [
+    {
+      "id": "0",
+      "name": "Admin",
+      "age": 35,
+      "email": "admin@gmail.com",
+      "phone": "0112233445",
+      "address": "789 Đường Lê Văn Sỹ, Quận 3, TP. Hồ Chí Minh",
+      "password": "Admin@123",
+      "role": "employee",
+      "avatar": "/src/assets/software-engineer.png"
     },
-    "user": [
+    {
+      "id": "1",
+      "name": "Nguyễn Thị Mai",
+      "age": 30,
+      "email": "mai.nguyen@example.com",
+      "phone": "0123456789",
+      "address": "123 Đường Nguyễn Trãi, Quận 5, TP. Hồ Chí Minh",
+      "password": "Khachhang@123",
+      "role": "user",
+      "avatar": "/src/assets/woman.png"
+    },
+    {
+      "id": "2",
+      "name": "Trần Văn An",
+      "age": 25,
+      "email": "an.tran@example.com",
+      "phone": "0987654321",
+      "address": "456 Đường Cách Mạng Tháng 8, Quận 10, TP. Hồ Chí Minh",
+      "password": "Khachhang@456",
+      "role": "user",
+      "avatar": "/src/assets/man.png"
+    }
+  ],
+  "products": [
+    {
+      "id": "1",
+      "name": "Hoa Hồng Đỏ Tình Yêu",
+      "description": "Bó hoa hồng đỏ tượng trưng cho tình yêu mãnh liệt, thích hợp tặng người yêu trong dịp đặc biệt.",
+      "price": 350000,
+      "category": "Hoa bó",
+      "image": "/src/assets/rose_red.jpg"
+    },
+    {
+      "id": "2",
+      "name": "Hoa Tulip Hà Lan",
+      "description": "Tulip với màu sắc nhẹ nhàng, mang lại cảm giác sang trọng và tinh tế.",
+      "price": 420000,
+      "category": "Hoa bó",
+      "image": "/src/assets/tulip.jpg"
+    },
+    {
+      "id": "3",
+      "name": "Hoa Cẩm Chướng Hồng",
+      "description": "Mang ý nghĩa về sự biết ơn và tình cảm chân thành, thích hợp tặng mẹ hoặc cô giáo.",
+      "price": 280000,
+      "category": "Hoa bó",
+      "image": "/src/assets/carnation_pink.jpg"
+    },
+    {
+      "id": "4",
+      "name": "Giỏ Hoa Sinh Nhật",
+      "description": "Giỏ hoa phối nhiều loại hoa tươi rực rỡ, thể hiện lời chúc tốt đẹp trong ngày sinh nhật.",
+      "price": 500000,
+      "category": "Giỏ hoa",
+      "image": "/src/assets/birthday_basket.jpg"
+    },
+    {
+      "id": "5",
+      "name": "Hoa Lan Hồ Điệp",
+      "description": "Biểu tượng của sự may mắn và thịnh vượng, thường được trưng bày trong dịp Tết hoặc khai trương.",
+      "price": 950000,
+      "category": "Chậu hoa",
+      "image": "/src/assets/orchid.jpg"
+    },
+    {
+      "id": "6",
+      "name": "Hoa Baby Trắng",
+      "description": "Nhẹ nhàng và thuần khiết, hoa baby trắng thích hợp để trang trí bàn tiệc hoặc chụp ảnh cưới.",
+      "price": 250000,
+      "category": "Hoa bó",
+      "image": "/src/assets/baby_flower.jpg"
+    },
+    {
+      "id": "7",
+      "name": "Bó Hoa Hướng Dương",
+      "description": "Hoa hướng dương rực rỡ, tượng trưng cho niềm tin và hy vọng, thích hợp tặng bạn bè, đồng nghiệp.",
+      "price": 320000,
+      "category": "Hoa bó",
+      "image": "/src/assets/sunflower.jpg"
+    },
+    {
+      "id": "8",
+      "name": "Chậu Hoa Sen Đá",
+      "description": "Sen đá nhỏ xinh, dễ chăm sóc, thích hợp trang trí bàn làm việc hoặc làm quà tặng.",
+      "price": 180000,
+      "category": "Chậu hoa",
+      "image": "/src/assets/succulent.jpg"
+    },
+    {
+      "id": "9",
+      "name": "Giỏ Hoa Chúc Mừng",
+      "description": "Giỏ hoa tươi phối nhiều loại hoa rực rỡ, thích hợp tặng khai trương, chúc mừng thành công.",
+      "price": 650000,
+      "category": "Giỏ hoa",
+      "image": "/src/assets/congrats_basket.jpg"
+    }
+  ],
+  "order": [
+    {
+      "id": "1",
+      "user_id": 1,
+      "products": [
         {
-            "id": 0,
-            "name": "Admin",
-            "age": 35,
-            "email": "admin@gmail.com",
-            "phone": "0112233445",
-            "address": "789 Đường Lê Văn Sỹ, Quận 3, TP. Hồ Chí Minh",
-            "password": "Admin@123",
-            "role": "admin",
-            "avatar": "/src/assets/software-engineer.png"
+          "product_id": 1,
+          "quantity": 1
         },
         {
-            "id": 1,
-            "name": "Nguyễn Thị Mai",
-            "age": 30,
-            "email": "mai.nguyen@example.com",
-            "phone": "0123456789",
-            "address": "123 Đường Nguyễn Trãi, Quận 5, TP. Hồ Chí Minh",
-            "password": "Khachhang@123",
-            "role": "user",
-            "avatar": "/src/assets/woman.png"
-        },
-        {
-            "id": 2,
-            "name": "Trần Văn An",
-            "age": 25,
-            "email": "an.tran@example.com",
-            "phone": "0987654321",
-            "address": "456 Đường Cách Mạng Tháng 8, Quận 10, TP. Hồ Chí Minh",
-            "password": "Khachhang@456",
-            "role": "user",
-            "avatar": "/src/assets/man.png"
+          "product_id": 6,
+          "quantity": 2
         }
-    ],
-    "products": [
+      ],
+      "total": 850000,
+      "order_date": "2025-10-01",
+      "status": "Đang xử lý",
+      "customer_name": "Nguyễn Thị Mai",
+      "delivery_address": "123 Đường Nguyễn Trãi, Quận 5, TP. Hồ Chí Minh"
+    },
+    {
+      "id": "2",
+      "user_id": 2,
+      "products": [
         {
-            "id": 1,
-            "name": "Hoa Hồng Đỏ Tình Yêu",
-            "description": "Bó hoa hồng đỏ tượng trưng cho tình yêu mãnh liệt, thích hợp tặng người yêu trong dịp đặc biệt.",
-            "price": 350000,
-            "category": "Hoa bó",
-            "image": "/src/assets/rose_red.jpg"
-        },
-        {
-            "id": 2,
-            "name": "Hoa Tulip Hà Lan",
-            "description": "Tulip với màu sắc nhẹ nhàng, mang lại cảm giác sang trọng và tinh tế.",
-            "price": 420000,
-            "category": "Hoa bó",
-            "image": "/src/assets/tulip.jpg"
-        },
-        {
-            "id": 3,
-            "name": "Hoa Cẩm Chướng Hồng",
-            "description": "Mang ý nghĩa về sự biết ơn và tình cảm chân thành, thích hợp tặng mẹ hoặc cô giáo.",
-            "price": 280000,
-            "category": "Hoa bó",
-            "image": "/src/assets/carnation_pink.jpg"
-        },
-        {
-            "id": 4,
-            "name": "Giỏ Hoa Sinh Nhật",
-            "description": "Giỏ hoa phối nhiều loại hoa tươi rực rỡ, thể hiện lời chúc tốt đẹp trong ngày sinh nhật.",
-            "price": 500000,
-            "category": "Giỏ hoa",
-            "image": "/src/assets/birthday_basket.jpg"
-        },
-        {
-            "id": 5,
-            "name": "Hoa Lan Hồ Điệp",
-            "description": "Biểu tượng của sự may mắn và thịnh vượng, thường được trưng bày trong dịp Tết hoặc khai trương.",
-            "price": 950000,
-            "category": "Chậu hoa",
-            "image": "/src/assets/orchid.jpg"
-        },
-        {
-            "id": 6,
-            "name": "Hoa Baby Trắng",
-            "description": "Nhẹ nhàng và thuần khiết, hoa baby trắng thích hợp để trang trí bàn tiệc hoặc chụp ảnh cưới.",
-            "price": 250000,
-            "category": "Hoa bó",
-            "image": "/src/assets/baby_flower.jpg"
-        },
-        {
-            "id": 7,
-            "name": "Bó Hoa Hướng Dương",
-            "description": "Hoa hướng dương rực rỡ, tượng trưng cho niềm tin và hy vọng, thích hợp tặng bạn bè, đồng nghiệp.",
-            "price": 320000,
-            "category": "Hoa bó",
-            "image": "/src/assets/sunflower.jpg"
-        },
-        {
-            "id": 8,
-            "name": "Chậu Hoa Sen Đá",
-            "description": "Sen đá nhỏ xinh, dễ chăm sóc, thích hợp trang trí bàn làm việc hoặc làm quà tặng.",
-            "price": 180000,
-            "category": "Chậu hoa",
-            "image": "/src/assets/succulent.jpg"
-        },
-        {
-            "id": 9,
-            "name": "Giỏ Hoa Chúc Mừng",
-            "description": "Giỏ hoa tươi phối nhiều loại hoa rực rỡ, thích hợp tặng khai trương, chúc mừng thành công.",
-            "price": 650000,
-            "category": "Giỏ hoa",
-            "image": "/src/assets/congrats_basket.jpg"
+          "product_id": 4,
+          "quantity": 1
         }
-    ],
-    "order": [
+      ],
+      "total": 500000,
+      "order_date": "2025-10-05",
+      "status": "Đang xử lý",
+      "customer_name": "Trần Văn An",
+      "delivery_address": "456 Đường Cách Mạng Tháng 8, Quận 10, TP. Hồ Chí Minh"
+    },
+    {
+      "id": "3",
+      "user_id": 1,
+      "products": [
         {
-            "id": 1,
-            "user_id": 1,
-            "products": [
-                { "product_id": 1, "quantity": 1 },
-                { "product_id": 6, "quantity": 2 }
-            ],
-            "total": 850000,
-            "order_date": "2025-10-01",
-            "status": "Đã giao",
-            "delivery_address": "123 Đường Nguyễn Trãi, Quận 5, TP. Hồ Chí Minh"
+          "product_id": 7,
+          "quantity": 1
         },
         {
-            "id": 2,
-            "user_id": 2,
-            "products": [
-                { "product_id": 4, "quantity": 1 }
-            ],
-            "total": 500000,
-            "order_date": "2025-10-05",
-            "status": "Đang xử lý",
-            "delivery_address": "456 Đường Cách Mạng Tháng 8, Quận 10, TP. Hồ Chí Minh"
-        },
-        {
-            "id": 3,
-            "user_id": 1,
-            "products": [
-                { "product_id": 7, "quantity": 1 },
-                { "product_id": 2, "quantity": 1 }
-            ],
-            "total": 740000,
-            "order_date": "2025-10-08",
-            "status": "Đã hủy",
-            "delivery_address": "123 Đường Nguyễn Trãi, Quận 5, TP. Hồ Chí Minh"
+          "product_id": 2,
+          "quantity": 1
         }
-    ]
+      ],
+      "total": 740000,
+      "order_date": "2025-10-08",
+      "status": "Đã hủy",
+      "customer_name": "Nguyễn Việt Thành",
+      "delivery_address": "123 Đường Nguyễn Trãi, Quận 5, TP. Hồ Chí Minh"
+    }
+  ]
 }

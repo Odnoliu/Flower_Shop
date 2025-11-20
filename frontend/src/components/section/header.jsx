@@ -3,24 +3,19 @@ import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 import logo from "../../assets/hales_logo.jpg";
 import { Link } from "react-router-dom";
-import { useSidebar } from "../../context/sidebar_context";
 import axiosClient from "../../api/axios_client";
 
 export default function Header() {
   const [cartCount, setCartCount] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
-  const { isOpen } = useSidebar();
-
-  // Lấy thông tin giỏ hàng
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem("cartItems")) || [];
     setCartCount(cart.length);
   }, []);
 
-  // Kiểm tra đăng nhập và tải thông tin người dùng
   useEffect(() => {
-    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const loggedIn = localStorage.getItem("isLoggedIn") == "true";
     const userId = localStorage.getItem("userId");
     console.log(loggedIn)
     setIsLoggedIn(loggedIn);
@@ -42,14 +37,9 @@ export default function Header() {
 
   return (
     <motion.header
-      animate={{
-        marginLeft: isOpen ? 220 : 80,
-        width: isOpen ? "calc(100% - 220px)" : "calc(100% - 80px)",
-      }}
       transition={{ duration: 0.4, type: "spring" }}
       className="bg-[#FFF9F0] shadow-sm p-4 flex justify-between items-center z-50 relative"
     >
-      {/* Logo và tên thương hiệu */}
       <div className="flex items-center space-x-3">
         <img
           src={logo}
@@ -60,20 +50,7 @@ export default function Header() {
           Hales Flower Shop
         </h1>
       </div>
-
-      {/* Phần bên phải */}
       <div className="flex items-center space-x-6 text-[#CDB38B] font-semibold">
-        {/* Giỏ hàng */}
-        <div className="relative cursor-pointer hover:text-[#a68b62] transition">
-          <ShoppingCart className="w-6 h-6" />
-          {cartCount > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
-              {cartCount}
-            </span>
-          )}
-        </div>
-
-        {/* Nếu đăng nhập rồi thì hiện avatar */}
         {isLoggedIn && userData ? (
           <div className="flex items-center space-x-3">
             <Link to="/profile">
@@ -91,7 +68,6 @@ export default function Header() {
             </button>
           </div>
         ) : (
-          // Nếu chưa đăng nhập
           <div className="flex space-x-4">
             <Link
               to="/login"

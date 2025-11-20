@@ -3,7 +3,6 @@ import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
 import ForgotPassword from "./pages/auth/forgot_password";
 import Home from "./pages/home/layout";
-import PaymentTest from "../../frontend/src/components/pages/paymentTest"
 import './App.css'
 
 export default function App() {
@@ -14,7 +13,6 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/" element={<Home />} />
-        <Route path="/payment-test" element={<PaymentTest />} />        
       </Routes>
     </Router>
   );

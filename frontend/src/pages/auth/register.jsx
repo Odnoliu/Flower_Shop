@@ -81,11 +81,11 @@ export default function Register() {
               custom={0.4 + i * 0.1}
             >
               <label className="block text-gray-600 text-sm font-medium mb-2">
-                {field === "name"
+                {field == "name"
                   ? "Họ và tên"
-                  : field === "phone"
+                  : field == "phone"
                   ? "Số điện thoại"
-                  : field === "password"
+                  : field == "password"
                   ? "Mật khẩu"
                   : "Xác nhận mật khẩu"}
               </label>
@@ -96,11 +96,11 @@ export default function Register() {
                   setForm({ ...form, [field]: e.target.value })
                 }
                 placeholder={`Nhập ${
-                  field === "confirmPassword"
+                  field == "confirmPassword"
                     ? "lại mật khẩu"
-                    : field === "name"
+                    : field == "name"
                     ? "họ và tên"
-                    : field === "phone"
+                    : field == "phone"
                     ? "số điện thoại"
                     : "mật khẩu"
                 }...`}
