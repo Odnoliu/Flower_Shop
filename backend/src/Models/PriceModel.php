@@ -65,31 +65,25 @@ class PriceModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function update($effectiveDate, $productId, $updatedDate, $price) {
+    public function update($productId, $updatedDate, $price) {
         $stmt = $this->pdo->prepare("
             UPDATE price
             SET PRICE_UpdatedDate = :updatedDate,
                 PRICE_Price = :price
-            WHERE PRICE_EffectiveDate = :effectiveDate
-            AND PRODUCT_Id = :productId
+            WHERE PRODUCT_Id = :productId
         ");
 
         $stmt->bindParam(':updatedDate', $updatedDate, PDO::PARAM_STR);
         $stmt->bindParam(':price', $price, PDO::PARAM_STR);
-        $stmt->bindParam(':effectiveDate', $effectiveDate, PDO::PARAM_STR);
         $stmt->bindParam(':productId', $productId, PDO::PARAM_INT);
-
         return $stmt->execute();
     }
 
-    public function delete($effectiveDate, $productId) {
+    public function delete( $productId) {
         $stmt = $this->pdo->prepare("
             DELETE FROM price
-            WHERE PRICE_EffectiveDate = :effectiveDate
-              AND PRODUCT_Id = :productId
+            WHERE PRODUCT_Id = :productId
         ");
-
-        $stmt->bindParam(':effectiveDate', $effectiveDate, PDO::PARAM_STR);
         $stmt->bindParam(':productId', $productId, PDO::PARAM_INT);
 
         return $stmt->execute();

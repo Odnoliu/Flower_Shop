@@ -63,18 +63,18 @@ class PriceController {
         }
     }
 
-    public function updatePrice($effectiveDate, $productId){
+    public function updatePrice($productId){
         $data = json_decode(file_get_contents('php://input'), true);
 
         if (
             isset($data['PRICE_UpdatedDate']) && !empty($data['PRICE_UpdatedDate'])
-            && isset($data['PRICE_Price']) && (is_numeric($data['PRICE_Price']) || $data['PRICE_Price'] === "0" || $data['PRICE_Price'] === 0)
+            && isset($data['PRICE_Price']) && (is_numeric($data['PRICE_Price']) || $data['PRICE_Price'] == "0" || $data['PRICE_Price'] === 0)
         ) {
             $updatedDate = $data['PRICE_UpdatedDate'];
             $price = $data['PRICE_Price'];
             $productIdInt = (int)$productId;
 
-            $success = $this->model->update($effectiveDate, $productIdInt, $updatedDate, $price);
+            $success = $this->model->update($productIdInt, $updatedDate, $price);
             if ($success) {
                 $this->jsonResponse(['success' => true]);
             } else {
@@ -85,9 +85,9 @@ class PriceController {
         }
     }
 
-    public function deletePrice($effectiveDate, $productId){
+    public function deletePrice($productId){
         $productIdInt = (int)$productId;
-        $success = $this->model->delete($effectiveDate, $productIdInt);
+        $success = $this->model->delete($productIdInt);
         if ($success) {
             $this->jsonResponse(['success' => true]);
         } else {

@@ -10,7 +10,7 @@ class OrderModel {
     public function __construct() {
         $this->pdo = Database::getInstance();
     }
-    public function create($createdDate, $userPhone, $total = 0) {
+    public function create($createdDate, $userPhone, $total) {
         $stmt = $this->pdo->prepare("INSERT INTO Orders (ORDER_CreatedDate, USER_Phone, ORDER_Total, STATUS_Id) VALUES (:createdDate, :userPhone, :total, 1)");
         $stmt->bindParam(':createdDate', $createdDate, \PDO::PARAM_STR);
         $stmt->bindParam(':userPhone', $userPhone, \PDO::PARAM_STR);

@@ -101,7 +101,7 @@ insert into type (TYPE_Name) values
 create table product (
     PRODUCT_Id int auto_increment primary key,
     PRODUCT_Name varchar(255) not null,
-    PRODUCT_Avatar blob default null,
+    PRODUCT_Avatar longblob default null,
     TYPE_Id int not null,
     foreign key (TYPE_Id) references type(TYPE_Id) on delete cascade on update cascade
 )ENGINE=InnoDB;
@@ -114,7 +114,7 @@ insert into product (PRODUCT_Name, TYPE_Id) values
 
 create table image (
     IMAGE_Id int auto_increment primary key,
-    IMAGE_Image blob not null,
+    IMAGE_Image longblob not null,
     PRODUCT_Id int not null,
     foreign key (PRODUCT_Id) references product(PRODUCT_Id) on delete cascade on update cascade
 )ENGINE=InnoDB;

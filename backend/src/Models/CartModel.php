@@ -29,26 +29,34 @@ class CartModel {
     }
 
     public function readById($id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM Cart WHERE CART_Id = :id");
+        $stmt = $this->pdo->prepare("SELECT * FROM Cart WHERE USER_Phone = :id");
         $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
-    public function updateQuantity($id, $quantity) {
+    public function updateQuantity($id, $phone, $quantity) {
         $stmt = $this->pdo->prepare(
             "UPDATE Cart
             SET CART_Quantity = :quantity
-            WHERE CART_Id = :id");
+            WHERE PRODUCT_Id = :id
+            AND USER_Phone = :phone");
         $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
+        $stmt->bindParam(':phone', $phone, \PDO::PARAM_INT);
         $stmt->bindParam(':quantity', $quantity, \PDO::PARAM_INT);
         return $stmt->execute();
     }
 
 
-    public function delete($id) {
-        $stmt = $this->pdo->prepare("DELETE FROM Cart WHERE CART_Id = :id");
+    public function deleteAll($id) {
+        $stmt = $this->pdo->prepare("DELETE FROM Cart WHERE ACCOUNT_Id = :id");
         $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+    public function deleteItem($phone, $product_id){
+        $stmt = $this->pdo->prepare("DELETE FROM Cart WHERE USER_Phone = :phone AND PRODUCT_Id = :product_id");
+        $stmt->bindParam(':id', $phone, \PDO::PARAM_INT);
+        $stmt->bindParam(':product_id', $product_id, \PDO::PARAM_INT);
         return $stmt->execute();
     }
 }

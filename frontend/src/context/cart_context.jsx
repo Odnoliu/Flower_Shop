@@ -1,330 +1,199 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import axiosClient from "../api/axios_client"; 
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { v4 as uuidv4 } from "uuid";
 
+import CartService from "../services/cart.service";
+import ProductService from "../services/product.service";
+import PriceService from "../services/price.service";
 
 const CartContext = createContext();
 
-const LOCAL_KEY = "cart_v1";
-
-function getUserFromStorage() {
-  try {
-    const raw = localStorage.getItem("user");
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-function getToken() {
-  return localStorage.getItem("token") || null;
+function getAccountId() {
+  if (typeof window == "undefined") return null;
+  return localStorage.getItem("accountId");
 }
 
-export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState(() => {
-    try {
-      const raw = localStorage.getItem(LOCAL_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
-  });
-
+export function CartProvider({ children }) {
+  const [cart, setCart] = useState([]);
   const [isSyncing, setIsSyncing] = useState(false);
-  const user = useMemo(() => getUserFromStorage(), []);
-  const token = useMemo(() => getToken(), []);
+  const accountId = getAccountId();
 
-  useEffect(() => {
+  const getLatestPrice = async (productId) => {
     try {
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(cart));
-    } catch {}
-  }, [cart]);
+      const res = await PriceService.getByProductId(productId);
+      const list = Array.isArray(res) ? res : res?.prices || [];
+      if (!list.length) return null;
+
+      const latest = list.reduce((acc, cur) => {
+        const dCur = new Date(
+          cur.PRICE_EffectiveDate || cur.effective_date || cur.created_at || 0
+        );
+        const dAcc = new Date(
+          acc.PRICE_EffectiveDate || acc.effective_date || acc.created_at || 0
+        );
+        return dCur > dAcc ? cur : acc;
+      }, list[0]);
+
+      const priceNum = Number(latest.PRICE_Price ?? latest.price ?? 0) || 0;
+      return priceNum;
+    } catch (err) {
+      console.warn("Không lấy được giá mới nhất cho product", productId, err);
+      return null;
+    }
+  };
+
+  const loadServerCart = async () => {
+    if (!accountId) {
+      setCart([]);
+      return;
+    }
+
+    setIsSyncing(true);
+    try {
+      const res = await CartService.getCart();
+      const cartRows = Array.isArray(res) ? res : res?.data || [];
+
+      if (!cartRows.length) {
+        setCart([]);
+        return;
+      }
+
+      const productsRes = await ProductService.list();
+      const productList = Array.isArray(productsRes)
+        ? productsRes
+        : productsRes?.products || productsRes?.data || [];
+
+      const productMap = {};
+      for (const p of productList) {
+        const pid = p.PRODUCT_Id ?? p.id;
+        if (pid) productMap[pid] = p;
+      }
+
+      const enriched = await Promise.all(
+        cartRows.map(async (row) => {
+          const productId = row.PRODUCT_Id;
+          const product = productMap[productId] || {};
+
+          let price =
+            Number(product.PRICE_Price ?? product.price ?? 0) || 0;
+          const latestPrice = await getLatestPrice(productId);
+          if (latestPrice !== null) price = latestPrice;
+
+          return {
+            localId: uuidv4(),
+            cartId: row.CART_Id ?? row.id,
+            id: productId, 
+            quantity: Number(row.CART_Quantity ?? 1),
+            price,
+            name: product.PRODUCT_Name ?? product.name ?? "Sản phẩm",
+            image:
+              product.PRODUCT_Avatar ??
+              product.image ??
+              "/placeholder.jpg",
+            productData: product,
+          };
+        })
+      );
+
+      setCart(enriched);
+    } catch (err) {
+      console.error("Lỗi load giỏ hàng:", err);
+      setCart([]);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   useEffect(() => {
-    if (!user) return;
-    (async () => {
-      setIsSyncing(true);
-      try {
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
-        const res = await axiosClient.get(`/cart?userId=${user.id}`, { headers });
-        const serverCart = Array.isArray(res.data) ? res.data : [];
-        const merged = mergeCarts(cart, serverCart);
-        const synced = await syncMergedToServer(merged, user.id, headers);
-        setCart(synced);
-      } catch (err) {
-        console.error("Cart sync failed:", err);
-      } finally {
-        setIsSyncing(false);
-      }
-    })();
-  }, [user]);
+    loadServerCart();
+  }, [accountId]);
 
-  function mergeCarts(local, server) {
-    const map = new Map();
-    for (const s of server) {
-      const pid = s.productId ?? s.product?.id ?? s.productId;
-      const key = `${pid}`;
-      map.set(key, {
-        productId: pid,
-        quantity: Number(s.quantity || 1),
-        serverId: s.id,
-        productData: s.product ?? s.productData ?? { id: pid, name: s.name, image: s.image, price: s.price },
-      });
-    }
-    for (const l of local) {
-      const pid = l.id ?? l.product?.id ?? l.productId;
-      const key = `${pid}`;
-      const existing = map.get(key);
-      if (existing) {
-        existing.quantity = (existing.quantity || 0) + (l.quantity || 1);
-      } else {
-        map.set(key, {
-          productId: pid,
-          quantity: Number(l.quantity || 1),
-          serverId: l.serverId ?? null,
-          productData: l.productData ?? { id: pid, name: l.name, image: l.image, price: l.price },
-        });
-      }
-    }
-    const out = [];
-    for (const [k, v] of map) {
-      out.push({
-        localId: uuidv4(),
-        id: v.productId,
-        quantity: v.quantity,
-        serverId: v.serverId ?? null,
-        productData: v.productData,
-        name: v.productData?.name,
-        image: v.productData?.image,
-        price: v.productData?.price,
-      });
-    }
-    return out;
-  }
-
-  async function syncMergedToServer(merged, userId, headers = {}) {
-    const out = [];
-    for (const item of merged) {
-      try {
-        if (item.serverId) {
-          await axiosClient.patch(`/cart/${item.serverId}`, { quantity: item.quantity }, { headers }).catch(() => {});
-          out.push({ ...item });
-        } else {
-          const payload = {
-            userId,
-            productId: item.id,
-            quantity: item.quantity,
-            productData: item.productData,
-          };
-          const created = await axiosClient.post("/cart", payload, { headers });
-          const serverId = created?.data?.id ?? null;
-          out.push({ ...item, serverId });
-        }
-      } catch (err) {
-        console.warn("sync item failed", err);
-        out.push(item);
-      }
-    }
-    return out;
-  }
-
-  const totalCount = useMemo(() => cart.reduce((s, it) => s + Number(it.quantity || 0), 0), [cart]);
-  const subTotal = useMemo(
-    () => cart.reduce((s, it) => s + (Number(it.price || it.productData?.price || 0) * Number(it.quantity || 0)), 0),
+  const totalCount = useMemo(
+    () => cart.reduce((sum, item) => sum + item.quantity, 0),
     [cart]
   );
 
-  const findIndexByProductId = (productId) => cart.findIndex((c) => `${c.id}` == `${productId}` || `${c.productData?.id}` == `${productId}`);
+  const subTotal = useMemo(
+    () => cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [cart]
+  );
 
-  const addToCart = async (product, qty = 1, options = {}) => {
-    const pid = product.id ?? product.productId ?? product._id;
-    const price = product.price ?? product.pricePerUnit ?? product.product?.price ?? 0;
-    const name = product.name ?? product.title ?? "Sản phẩm";
-    const image = product.image ?? product.img ?? (product.product?.image) ?? "";
+  const addToCart = async (product, qty = 1) => {
+    if (!accountId) {
+      console.warn("Chưa có accountId, không thể thêm vào giỏ hàng");
+      return;
+    }
 
-    setCart((prev) => {
-      const idx = prev.findIndex((it) => `${it.id}` == `${pid}`);
-      if (idx >= 0) {
-        const copy = [...prev];
-        copy[idx] = { ...copy[idx], quantity: copy[idx].quantity + qty };
-        return copy;
-      } else {
-        return [
-          ...prev,
-          {
-            localId: uuidv4(),
-            id: pid,
-            name,
-            image,
-            price,
-            quantity: qty,
-            productData: product,
-            serverId: null,
-          },
-        ];
-      }
-    });
+    const productId = product.PRODUCT_Id ?? product.id;
+    if (!productId) return;
 
-    if (user) {
-      try {
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
-        const res = await axiosClient.get(`/cart?userId=${user.id}&productId=${pid}`, { headers });
-        const found = Array.isArray(res.data) && res.data.length > 0 ? res.data[0] : null;
-        if (found) {
-          await axiosClient.patch(`/cart/${found.id}`, { quantity: found.quantity + qty }, { headers });
-          setCart((prev) => prev.map((it) => (`${it.id}` == `${pid}` ? { ...it, serverId: found.id } : it)));
-        } else {
-          const payload = {
-            userId: user.id,
-            productId: pid,
-            quantity: qty,
-            productData: product,
-          };
-          const created = await axiosClient.post("/cart", payload, { headers });
-          const serverId = created?.data?.id ?? null;
-          setCart((prev) => prev.map((it) => (`${it.id}` == `${pid}` ? { ...it, serverId } : it)));
-        }
-      } catch (err) {
-        console.error("addToCart sync error", err);
-      }
+    try {
+      await CartService.addItem({
+        ACCOUNT_Id: Number(accountId),
+        PRODUCT_Id: productId,
+        CART_Quantity: qty,
+      });
+      await loadServerCart();
+    } catch (err) {
+      console.error("Thêm vào giỏ thất bại:", err);
+    }
+  };
+
+  const updateQty = async (productId, newQty) => {
+    const item = cart.find((i) => i.id == productId);
+    if (!item) return;
+    if (newQty <= 0) return;
+
+    try {
+      await CartService.updateItem(item.cartId, {
+        CART_Quantity: newQty,
+      });
+      await loadServerCart();
+    } catch (err) {
+      console.error("Cập nhật số lượng thất bại:", err);
     }
   };
 
   const removeFromCart = async (productId) => {
-    const pid = productId;
-    setCart((prev) => prev.filter((it) => `${it.id}` !== `${pid}`));
-    if (user) {
-      try {
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
-        const res = await axiosClient.get(`/cart?userId=${user.id}&productId=${pid}`, { headers });
-        const found = Array.isArray(res.data) && res.data.length > 0 ? res.data[0] : null;
-        if (found) {
-          await axiosClient.delete(`/cart/${found.id}`, { headers });
-        }
-      } catch (err) {
-        console.error("removeFromCart error", err);
-      }
-    }
-  };
-
-  const updateQty = async (productId, qty) => {
-    const newQty = Math.max(1, Math.floor(Number(qty) || 1));
-    setCart((prev) => prev.map((it) => (`${it.id}` == `${productId}` ? { ...it, quantity: newQty } : it)));
-    if (user) {
-      try {
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
-        const res = await axiosClient.get(`/cart?userId=${user.id}&productId=${productId}`, { headers });
-        const found = Array.isArray(res.data) && res.data.length > 0 ? res.data[0] : null;
-        if (found) {
-          await axiosClient.patch(`/cart/${found.id}`, { quantity: newQty }, { headers });
-        }
-      } catch (err) {
-        console.error("updateQty error", err);
-      }
-    }
-  };
-
-  const checkout = async (items = null, extra = { address: null, note: "" }) => {
-    if (!user) {
-      const err = new Error("NOT_AUTHENTICATED");
-      err.code = "NOT_AUTH";
-      throw err;
-    }
-
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    const itemsToBuy = (() => {
-      if (!items) return [...cart];
-      if (Array.isArray(items) && items.length > 0 && (typeof items[0] == "string" || typeof items[0] == "number")) {
-        return cart.filter((c) => items.includes(`${c.id}`) || items.includes(c.id));
-      }
-      return cart.filter((c) => items.some((it) => `${it.id}` == `${c.id}` || `${it.localId}` == `${c.localId}`));
-    })();
-
-    if (itemsToBuy.length == 0) {
-      throw new Error("NO_ITEMS");
-    }
-    const total = itemsToBuy.reduce((s, it) => s + Number(it.price || it.productData?.price || 0) * Number(it.quantity || 0), 0);
-    const orderPayload = {
-      userId: user.id,
-      items: itemsToBuy.map((it) => ({
-        productId: it.id,
-        quantity: it.quantity,
-        price: it.price ?? it.productData?.price ?? 0,
-        productData: it.productData ?? { id: it.id, name: it.name, image: it.image },
-      })),
-      total,
-      address: extra.address ?? user.address ?? null,
-      note: extra.note ?? "",
-      status: "pending",
-      createdAt: new Date().toISOString(),
-    };
+    const item = cart.find((i) => i.id == productId);
+    if (!item) return;
 
     try {
-      const res = await axiosClient.post("/orders", orderPayload, { headers });
-      const order = res?.data;
-      for (const it of itemsToBuy) {
-        try {
-          if (it.serverId) {
-            await axiosClient.delete(`/cart/${it.serverId}`, { headers });
-          } else {
-            const found = await axiosClient.get(`/cart?userId=${user.id}&productId=${it.id}`, { headers });
-            if (Array.isArray(found.data) && found.data.length > 0) {
-              await axiosClient.delete(`/cart/${found.data[0].id}`, { headers });
-            }
-          }
-        } catch (innerErr) {
-          console.warn("Failed to remove item from server cart after checkout", innerErr);
-        }
-      }
-      setCart((prev) => prev.filter((p) => !itemsToBuy.some((b) => `${b.id}` == `${p.id}`)));
-
-      return order;
+      await CartService.clear(`/${item.cartId}`);
+      setCart((prev) => prev.filter((i) => i.id !== productId));
     } catch (err) {
-      console.error("checkout error", err);
-      throw err;
+      console.error("Xóa sản phẩm khỏi giỏ thất bại:", err);
+      await loadServerCart();
     }
+  };
+
+  const removeMany = async (items) => {
+    for (const it of items) {
+      try {
+        const item = cart.find((c) => c.id == it.id);
+        if (!item) continue;
+        await CartService.clear(`/${item.cartId}`);
+      } catch (err) {
+        console.error("Xóa dòng cart thất bại:", err);
+      }
+    }
+    await loadServerCart();
   };
 
   const clear = async () => {
-    const old = cart;
-    setCart([]);
-    if (user) {
-      try {
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
-        const res = await axiosClient.get(`/cart?userId=${user.id}`, { headers });
-        if (Array.isArray(res.data)) {
-          await Promise.all(res.data.map((it) => axiosClient.delete(`/cart/${it.id}`, { headers })));
-        }
-      } catch (err) {
-        console.error("clear server cart failed", err);
-        setCart(old);
-      }
-    }
-  };
-
-  const refreshFromServer = async () => {
-    if (!user) return;
-    setIsSyncing(true);
     try {
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
-      const res = await axiosClient.get(`/cart?userId=${user.id}`, { headers });
-      const serverCart = Array.isArray(res.data)
-        ? res.data.map((s) => ({
-            localId: uuidv4(),
-            id: s.productId,
-            serverId: s.id,
-            quantity: s.quantity,
-            productData: s.productData ?? {},
-            name: s.productData?.name ?? "",
-            image: s.productData?.image ?? "",
-            price: s.productData?.price ?? s.price ?? 0,
-          }))
-        : [];
-      setCart(serverCart);
+      for (const it of cart) {
+        await CartService.clear(`/${it.cartId}`);
+      }
+      setCart([]);
     } catch (err) {
-      console.error("refreshFromServer error", err);
-    } finally {
-      setIsSyncing(false);
+      console.error("Xóa toàn bộ giỏ hàng thất bại:", err);
+      await loadServerCart();
     }
   };
 
@@ -332,20 +201,22 @@ export const CartProvider = ({ children }) => {
     <CartContext.Provider
       value={{
         cart,
-        addToCart,
-        removeFromCart,
-        updateQty,
         totalCount,
         subTotal,
-        checkout,
-        clear,
-        refreshFromServer,
         isSyncing,
+        addToCart,
+        updateQty,
+        removeFromCart,
+        removeMany,
+        clear,
+        reload: loadServerCart,
       }}
     >
       {children}
     </CartContext.Provider>
   );
-};
+}
 
-export const useCart = () => useContext(CartContext);
+export function useCart() {
+  return useContext(CartContext);
+}

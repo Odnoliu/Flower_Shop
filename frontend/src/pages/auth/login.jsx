@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import logo from "../../assets/hales_logo.jpg";
 import Loading from "../../components/auth/loading";
-import axiosClient from "../../api/axios_client";
+import AuthService from "../../services/auth.service";
 
 export default function Login() {
   const [phone, setPhone] = useState("");
@@ -31,40 +31,35 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await axiosClient.get("/user");
-      const users = response.data;
-      const foundUser = users.find(
-        (u) => u.phone == phone && u.password == password
-      );
+      const result = await AuthService.login(phone, password);
 
-      if (foundUser) {
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("userId", foundUser.id);
-        localStorage.setItem("role", foundUser.role || "user");
-        localStorage.setItem("userName", foundUser.name || "");
-
-        Swal.fire({
-          icon: "success",
-          title: "Đăng nhập thành công!",
-          text: `Chào mừng ${foundUser.name}!`,
-          showConfirmButton: false,
-          timer: 1200,
-        });
-        setTimeout(() => navigate("/"), 1200);
-      } else {
+      if (!result) {
         Swal.fire({
           icon: "error",
           title: "Sai thông tin!",
           text: "Số điện thoại hoặc mật khẩu không chính xác!",
         });
+        return;
       }
+
+      Swal.fire({
+        icon: "success",
+        title: "Đăng nhập thành công!",
+        text: `Chào mừng ${
+          localStorage.getItem("userName") || result.role || "khách"
+        }`,
+        showConfirmButton: false,
+        timer: 1200,
+      });
+
+      setTimeout(() => navigate("/"), 1200);
     } catch (error) {
+      console.error(error);
       Swal.fire({
         icon: "error",
         title: "Lỗi kết nối!",
-        text: "Không thể kết nối đến máy chủ JSON Server!",
+        text: "Không thể kết nối đến máy chủ!",
       });
-      console.error(error);
     } finally {
       setLoading(false);
     }

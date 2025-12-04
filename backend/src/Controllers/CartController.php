@@ -43,14 +43,14 @@ class CartController {
         }
     }
 
-    public function updateQuantity($id) {
+    public function updateQuantity($product_id) {
         $data = json_decode(file_get_contents('php://input'), true);
         if (isset($data['CART_Quantity']) && !empty($data['CART_Quantity'])) {
-            $success = $this->model->updateQuantity($id, $data['CART_Quantity']);
+            $success = $this->model->updateQuantity($product_id, $data['USER_Phone'],$data['CART_Quantity']);
             if ($success) {
                 $this->jsonResponse([
                     'success' => true,
-                    'CART_Id' => $id,
+                    'PRODUCT_Id' => $product_id,
                     'CART_Quantity' => $data['CART_Quantity']
                 ]);
             } else {
@@ -62,14 +62,13 @@ class CartController {
     }
 
     public function deleteCart($id) {
-        $success = $this->model->delete($id);
+        $success = $this->model->deleteAll($id);
         if ($success) {
             $this->jsonResponse(['success' => true]);
         } else {
             $this->jsonResponse(['error' => 'Delete failed'], 500);
         }
     }
-
     // This function sends a JSON response with the given data and HTTP status code in case of format error
     private function jsonResponse($data, $status = 200) {
         http_response_code($status);

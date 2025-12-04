@@ -26,13 +26,14 @@ class ProductController
         $result = $this->model->readAll();
 
         foreach ($result['products'] as &$product) {
-            if (!empty($product['PRODUCT_Avartar'])) {
-                $product['PRODUCT_Avartar'] = 'data:image/png;base64,' . base64_encode($product['PRODUCT_Avartar']);
+            if (!empty($product['PRODUCT_Avatar'])) {
+                $product['PRODUCT_Avatar'] = 'data:image/png;base64,' . base64_encode($product['PRODUCT_Avatar']);
             } else {
-                $product['PRODUCT_Avartar'] = null;
+                $product['PRODUCT_Avatar'] = null;
             }
         }
-
+        error_log("=== DEBUG index() - Final Result ===");
+        error_log(print_r($result, true));
         $this->jsonResponse($result);
     }
 
@@ -48,8 +49,8 @@ class ProductController
             $typeId = (int)$data['TYPE_Id'];
             $avatar = null;
 
-            if (isset($data['PRODUCT_Avartar']) && !empty($data['PRODUCT_Avartar'])) {
-                $avatar = $this->decodeBase64Image($data['PRODUCT_Avartar']);
+            if (isset($data['PRODUCT_Avatar']) && !empty($data['PRODUCT_Avatar'])) {
+                $avatar = $this->decodeBase64Image($data['PRODUCT_Avatar']);
                 if ($avatar == false) {
                     $this->jsonResponse(['error' => 'Invalid image format'], 400);
                 }
@@ -74,8 +75,8 @@ class ProductController
 
         if (!empty($products)) {
             foreach ($products as &$p) {
-                if (!empty($p['PRODUCT_Avartar'])) {
-                    $p['PRODUCT_Avartar'] = 'data:image/png;base64,' . base64_encode($p['PRODUCT_Avartar']);
+                if (!empty($p['PRODUCT_Avatar'])) {
+                    $p['PRODUCT_Avatar'] = 'data:image/png;base64,' . base64_encode($p['PRODUCT_Avatar']);
                 }
             }
             $this->jsonResponse($products);
@@ -100,8 +101,8 @@ class ProductController
             $typeId = (int)$data['TYPE_Id'];
             $avatar = null;
 
-            if (isset($data['PRODUCT_Avartar']) && !empty($data['PRODUCT_Avartar'])) {
-                $avatar = $this->decodeBase64Image($data['PRODUCT_Avartar']);
+            if (isset($data['PRODUCT_Avatar']) && !empty($data['PRODUCT_Avatar'])) {
+                $avatar = $this->decodeBase64Image($data['PRODUCT_Avatar']);
                 if ($avatar == false) {
                     $this->jsonResponse(['error' => 'Invalid image format'], 400);
                 }

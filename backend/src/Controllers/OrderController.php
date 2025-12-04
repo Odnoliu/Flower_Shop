@@ -29,7 +29,7 @@ class OrderController {
         if (isset($data['USER_Phone']) && !empty($data['USER_Phone'])) {
 
             $today = date('Y-m-d');
-            $id = $this->model->create($today, $data['USER_Phone']);
+            $id = $this->model->create($today, $data['USER_Phone'], $data['ORDER_Total'] ?? 0);
             
 
             if (!empty($detail) && is_array($detail)) {

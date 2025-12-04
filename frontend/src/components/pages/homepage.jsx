@@ -78,7 +78,7 @@ export default function HomePageContent({
   onNavigate, 
 }) {
   const {setActivePage } = useSidebar();
-
+  const loggedIn = localStorage.getItem("isLoggedIn") == "true";
   useEffect(() => {
     setActivePage("Trang chủ");
   }, [setActivePage]);
@@ -277,11 +277,17 @@ export default function HomePageContent({
               Sẵn sàng mang hương sắc đến nhà bạn?
             </h3>
             <button
-              className="inline-block cursor-pointer px-8 py-3 rounded-full bg-white text-[#4B3A2F] font-semibold shadow-lg"
-              aria-label="Đặt hàng ngay"
-              onClick={() => handleNavigate("Giỏ hàng")}
+              className="inline-block cursor-pointer px-8 py-3 rounded-full bg-white text-[#4B3A2F] font-semibold shadow-lg hover:bg-gray-100 transition-colors"
+              aria-label={loggedIn ? "Đặt hàng ngay" : "Đăng nhập ngay"}
+              onClick={() => {
+                if (loggedIn) {
+                  handleNavigate("Giỏ hàng");
+                } else {
+                  window.location.href = "/login";
+                }
+              }}
             >
-              Đặt hàng ngay
+              {loggedIn ? "Đặt hàng ngay" : "Đăng nhập ngay"}
             </button>
           </div>
         </section>

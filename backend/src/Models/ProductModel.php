@@ -17,7 +17,7 @@ class ProductModel
     public function create($name, $avatar, $typeId)
     {
         $stmt = $this->pdo->prepare("
-            INSERT INTO product (PRODUCT_Name, PRODUCT_Avartar, TYPE_Id)
+            INSERT INTO product (PRODUCT_Name, PRODUCT_Avatar, TYPE_Id)
             VALUES (:name, :avatar, :typeId)
         ");
         $stmt->bindParam(':name', $name, PDO::PARAM_STR);
@@ -33,7 +33,7 @@ class ProductModel
         $total = (int)$countStmt->fetchColumn();
 
         $stmt = $this->pdo->query("
-            SELECT p.PRODUCT_Id, p.PRODUCT_Name, p.PRODUCT_Avartar, p.TYPE_Id, t.TYPE_Name
+            SELECT p.PRODUCT_Id, p.PRODUCT_Name, p.PRODUCT_Avatar, p.TYPE_Id, t.TYPE_Name
             FROM product p
             LEFT JOIN type t ON p.TYPE_Id = t.TYPE_Id
             ORDER BY p.PRODUCT_Name ASC
@@ -55,7 +55,7 @@ class ProductModel
         $search = "%{$keyword}%";
 
         $stmt = $this->pdo->prepare("
-            SELECT p.PRODUCT_Id, p.PRODUCT_Name, p.PRODUCT_Avartar, p.TYPE_Id, t.TYPE_Name
+            SELECT p.PRODUCT_Id, p.PRODUCT_Name, p.PRODUCT_Avatar, p.TYPE_Id, t.TYPE_Name
             FROM product p
             LEFT JOIN type t ON p.TYPE_Id = t.TYPE_Id
             WHERE p.PRODUCT_Name LIKE :keyword
@@ -90,7 +90,7 @@ class ProductModel
         ];
 
         if ($avatar !== null) {
-            $sql .= ", PRODUCT_Avartar = :avatar";
+            $sql .= ", PRODUCT_avatar = :avatar";
             $params[':avatar'] = $avatar;
         }
 

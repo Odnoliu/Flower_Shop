@@ -32,8 +32,7 @@ class UserController {
             && !empty($data['USER_Email'])
             && isset($data['USER_Name']) 
             && !empty($data['USER_Name'])
-            && isset($data['USER_Gender']) 
-            && !empty($data['USER_Gender'])            
+            && isset($data['USER_Gender'])             
         ){
             $this->model->create($data['USER_Phone'], 
                                         $data['USER_Email'], 
@@ -62,8 +61,7 @@ class UserController {
             && !empty($data['USER_Email'])
             && isset($data['USER_Name']) 
             && !empty($data['USER_Name'])
-            && isset($data['USER_Gender']) 
-            && !empty($data['USER_Gender'])            
+            && isset($data['USER_Gender'])            
         ){
             $success = $this->model->update($phone, 
                                         $data['USER_Email'], 

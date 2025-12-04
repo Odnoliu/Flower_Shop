@@ -30,16 +30,15 @@ class PriceRoutes{
                 return;
             }
         }
-        if(preg_match('#^/price/([^/]+)/([^/]+)$#', $path, $matches)){
-            $effectiveDate = urldecode($matches[1]);
-            $productId = urldecode($matches[2]);
+        if(preg_match('#^/price/([^/]+)#', $path, $matches)){
+            $productId = urldecode($matches[1]);
             
             if($method == 'PUT'){
-                $this->controller->updatePrice($effectiveDate, $productId);
+                $this->controller->updatePrice($productId);
                 return;                
             }
             if($method == 'DELETE'){
-                $this->controller->deletePrice($effectiveDate, $productId);
+                $this->controller->deletePrice( $productId);
                 return;                
             }
         }

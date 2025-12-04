@@ -31,7 +31,7 @@ class PaymentController
             $this->jsonResponse(['error' => 'Invalid JSON'], 400);
         }
 
-        $required = ['bank_bin', 'account_number', 'amount', 'order_id'];
+        $required = ['bank_bin', 'account_number', 'amount'];
         foreach ($required as $field) {
             if (empty($input[$field])) {
                 $this->jsonResponse(['error' => "$field is required"], 400);
@@ -43,7 +43,6 @@ class PaymentController
         $amount = (int)$input['amount'];
         $description = $input['description'] ?? 'Thanh toan';
         $accountName = $input['account_name'] ?? '';
-        $orderId = $input['order_id'] ?? '';
 
         $addInfo = urlencode($description);
 
@@ -56,7 +55,6 @@ class PaymentController
         $qrBase64 = 'data:image/png;base64,' . base64_encode($qrImage);
         $this->jsonResponse([
             'success' => true,
-            'order_id' => $orderId,
             'qr_link' => $qrUrl,
             'amount' => $amount,
             'description' => $description,
