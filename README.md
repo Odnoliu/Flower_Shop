@@ -53,7 +53,7 @@ User Postman or Curl
     npm install
 3. Start development server:
     ```bash
-    npm start
+    npm run dev
 
 → App runs at http://localhost:3000.
 
